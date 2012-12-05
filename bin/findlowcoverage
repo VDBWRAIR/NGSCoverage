@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+###########################################################################################
+##                                  FindLowCoverage
+##  Author: Tyghe Vallard
+##  Email: vallardt@gmail.com
+##  Date: 10/17/2012
+##  Purpose:
+##      Finds low coverage in a pipeline run for a given reference similar to how the 
+##      findgap script locates gaps.
+##  Revisions:
+##      v1.0 - Initial release
+###########################################################################################
+import sys
+import os
+import re
+from optparse import OptionParser,OptionGroup
+
+try:
+    from wrairlib import *
+    from wrairlib.parser.exceptions import *
+    from wrairlib.exceptions1 import *
+    from wrairlib.fff.fffprojectdir import *
+    from wrairlib.fff.mappingproject import MappingProject
+    from wrairlib.fff.qcxls import QCXLS
+    from wrairlib.util import *
+except ImportError:
+    print "Is pyWrairLib installed?"
+    sys.exit( -1 )
+
+try:
+    from Bio import SeqIO
+except ImportError:
+    print "Is BioPython installed?"
+    sys.exit( -1 )
+
+from coverage.coverage import lct, LowCoverage
+
+################ Script Functions #######################
+def set_opts( parser ):
+    parser.add_option( "-d", dest="directory", help="The 454 pipeline directory to find low coverage for." )
+    parser.add_option( "-r", dest="reference", help="Which reference to use." )
+    parser.add_option( "--lct", dest='lct', default=lct, help="Low Coverage Threshold[Default: %s]" % lct )
+    parser.add_option( "--test", dest="test", action="store_true", help="Run the tests for this script" )
+    options,args = parser.parse_args()
+    if not (options.directory and options.reference) and not options.test:
+        parser.print_help()
+        parser.error( "Need to specify the project directory and reference" )
+    return options
+
+# Run The script if this script is executed
+if __name__ == '__main__':
+    parser = OptionParser()
+    options = set_opts( parser )
+    if options.test:
+        import doctest
+        doctest.testmod()
+    else:
+        lc = LowCoverage( options.directory, options.reference, options.lct )
+        lc.printTSV()

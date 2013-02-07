@@ -1,3 +1,12 @@
+from wrairlib import *
+from wrairlib.parser.exceptions import *
+from wrairlib.exceptions1 import *
+from wrairlib.fff.fffprojectdir import *
+from wrairlib.fff.mappingproject import MappingProject
+from wrairlib.fff.qcxls import QCXLS
+from wrairlib.util import *
+from Bio import SeqIO
+
 # Default low coverage threshold
 lct = 100
 
@@ -74,3 +83,6 @@ class LowCoverage:
         f = lambda x: int( x[5] ) < self.lct and self.ref in x[0]
         return filter( f, table )
 
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

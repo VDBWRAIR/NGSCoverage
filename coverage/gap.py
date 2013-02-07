@@ -1,3 +1,16 @@
+from wrairlib.fff.refstatus import RefStatus
+from wrairlib import *
+from wrairlib.parser.exceptions import *
+from wrairlib.exceptions1 import *
+from wrairlib.fff.fffprojectdir import *
+from wrairlib.fff.mappingproject import MappingProject
+from wrairlib.util import *
+import os
+import os.path
+import sys
+from Bio import SeqIO
+import re
+
 class FindGaps:
     dir = None # Holds the main directory
     sample_dirs = [] # Holds all of the midkey directories
@@ -48,15 +61,41 @@ class FindGaps:
                     dirs.append( c )
             self.sample_dirs = dirs
 
-    def _set_reference( self, use_only_ref ):
+    def _set_reference( self, reference = None ):
         """
-            Sets the reference to use by filtering all references used by this pipeline run
-            down to only the one that contains the text in use_only_ref
-
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
+            Set the reference using the given reference or infer it from 454RefStatus.txt
+        
+            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'manag' )
             >>> fg.reference_path
-            '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/Ref/pdmH1N1_California.fasta'
+            '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/Ref/H3N2_Managua.fasta'
+            
+            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', None )
+            >>> fg.reference_path
+            '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/Ref/H3N2_Managua.fasta'
         """
+        # If the reference is blank then it indicates
+        # that it should be automatically found using 454RefStatus file
+        if reference is None:
+            if self.single:
+                refstatus = RefStatus( os.path.join( self.dir, 'mapping', '454RefStatus.txt' ) )
+            else:
+                refstatus = RefStatus( os.path.join( self.dir, self.sample_dirs[0], 'mapping', '454RefStatus.txt' ) )
+                
+            reference = refstatus.get_likely_reference()
+            self._find_reference_by_sequencename( reference )
+        else:
+            # Return the searched out reference
+            self._find_reference_by_filename( reference )
+
+    def _find_reference_by_sequencename( self, seqname ):
+        """ Given a sequence identifier name return the reference file that contains it in a 454project """
+        refs = self._refs_for_proj()
+        for ref in refs:
+            for seq in SeqIO.parse( open( ref ), 'fasta' ):
+                if seqname.lower() in seq.id.lower():
+                    self.reference_path = ref
+
+    def _refs_for_proj( self ):
         # Setup the mapping project parser
         if self.single:
             first_proj = os.path.join( self.dir, 'mapping', '454MappingProject.xml' )
@@ -66,13 +105,22 @@ class FindGaps:
         
         # Get all the references for the first sample directory(They should all be the same)
         refs = m.get_reference_files()
+        return refs
 
-        # Return only the reference that is specified by use_only_ref
-        self.reference_path = filter( lambda x: use_only_ref.lower() in x.lower(), refs )
+    def _find_reference_by_filename( self, refFileName ):
+        """
+            Sets the reference to use by filtering all references used by this pipeline run
+            down to only the one that contains the text in refFileName
+
+        """
+        refs = self._refs_for_proj()
+
+        # Return only the reference that is specified by refFileName
+        self.reference_path = filter( lambda x: refFileName.lower() in x.lower(), refs )
         if len( self.reference_path ) > 1:
-            raise TooManyReferenceFilesException( use_only_ref, self.reference_path )
+            raise TooManyReferenceFilesException( refFileName, self.reference_path )
         elif len( self.reference_path ) < 1:
-            raise TooFewReferenceFilesException( use_only_ref, self.reference_path )
+            raise TooFewReferenceFilesException( refFileName, self.reference_path )
         else:
             self.reference_path = self.reference_path[0]
 
@@ -365,3 +413,6 @@ class FindGaps:
         gap_headers = list( set( gap_headers ) )
         return sorted( gap_headers )
 
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

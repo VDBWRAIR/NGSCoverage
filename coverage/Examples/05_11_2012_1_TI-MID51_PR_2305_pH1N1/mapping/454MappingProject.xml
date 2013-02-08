@@ -3,7 +3,7 @@
 
   <ProjectInformation>
     <ProjectType>Mapping</ProjectType>
-    <ProjectDirectory>/some/project/dir/2012_05_11/pdmH1N1_FD/05_11_2012_1_TI-MID51_PR_2305_pH1N1</ProjectDirectory>
+    <ProjectDirectory>05_11_2012_1_TI-MID51_PR_2305_pH1N1</ProjectDirectory>
     <dateCreated>Tue May 15 13:42:16 2012</dateCreated>
     <dateModified>Tue May 15 13:42:18 2012</dateModified>
     <SoftwareVersion>2.5.3 (20101207_1124)</SoftwareVersion>
@@ -45,7 +45,7 @@
     <backwardCompatibleContigging>false</backwardCompatibleContigging>
     <finishMode>false</finishMode>
     <autoTrimming>true</autoTrimming>
-    <VectorDatabase>/home/EIDRUdata/Primers/swH1N1_FD_primer_nodeg.fasta</VectorDatabase>
+    <VectorDatabase>../Primers/swH1N1_FD_primer_nodeg.fasta</VectorDatabase>
     <screeningDatabase/>
     <haplotypeFile/>
     <targetedRegionFile/>
@@ -62,23 +62,23 @@
   <ReferenceFiles>
     <SetRefCount>1</SetRefCount>
     <File>
-      <Path>Examples/Ref/infB_Victoria.fasta</Path>
+      <Path>../Ref/infB_Victoria.fasta</Path>
       <Type>Fasta</Type>
     </File>
     <File>
-      <Path>Examples/Ref/pdmH1N1_California.fasta</Path>
+      <Path>../Ref/pdmH1N1_California.fasta</Path>
       <Type>Fasta</Type>
     </File>
     <File>
-      <Path>Examples/Ref/H3N2_Managua.fasta</Path>
+      <Path>../Ref/H3N2_Managua.fasta</Path>
       <Type>Fasta</Type>
     </File>
     <File>
-      <Path>Examples/Ref/H5N1_Thailand.fasta</Path>
+      <Path>../Ref/H5N1_Thailand.fasta</Path>
       <Type>Fasta</Type>
     </File>
     <File>
-      <Path>Examples/Ref/H1N1_boston.fasta</Path>
+      <Path>../Ref/H1N1_boston.fasta</Path>
       <Type>Fasta</Type>
     </File>
   </ReferenceFiles>
@@ -87,7 +87,7 @@
     <SetReadCount>1</SetReadCount>
     <File>
       <SFFDirFilename>05_11_2012_1_TI-MID51_PR_2305_pH1N1.sff</SFFDirFilename>
-      <Path>/some/project/dir/2012_05_11/pdmH1N1_FD/05_11_2012_1_TI-MID51_PR_2305_pH1N1/sff/05_11_2012_1_TI-MID51_PR_2305_pH1N1.sff</Path>
+      <Path>sff/05_11_2012_1_TI-MID51_PR_2305_pH1N1/sff/05_11_2012_1_TI-MID51_PR_2305_pH1N1.sff</Path>
       <Type>SFF</Type>
       <IsPairedEnd>false</IsPairedEnd>
       <Rescore>false</Rescore>

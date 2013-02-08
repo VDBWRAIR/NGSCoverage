@@ -7,8 +7,82 @@ from wrairlib.fff.qcxls import QCXLS
 from wrairlib.util import *
 from Bio import SeqIO
 
+from wrairlib.fff.refstatus import RefStatus
+from wrairlib.fff.alignmentinfo import AlignmentInfo, CoverageRegion
+
 # Default low coverage threshold
-lct = 100
+MINREADDEPTH = 10
+
+class AlignmentCoverage(object):
+    def __init__( self, projDir, readLowCoverage = None ):
+        self.projDir = projDir
+
+        if readLowCoverage:
+            self.lct = readLowCoverage
+        else:
+            self.lct = MINREADDEPTH
+
+        self.set_wanted_identifiers( )
+
+        if self.wanted_idents == 'DENOVO':
+            aipath = os.path.join( projDir, 'assembly', '454AlignmentInfo.tsv' )
+        else:
+            aipath = os.path.join( projDir, 'mapping', '454AlignmentInfo.tsv' )
+        self.ai = AlignmentInfo( aipath )
+
+    def find_low_coverage( self ):
+        if self.wanted_idents == "DENOVO":
+            seqgen = self._low_coverage_assembly( )
+        else:
+            seqgen = self._low_coverage_mapping( )
+
+        for seqalign in seqgen:
+            yield (seqalign.name, self._gaplc_regions( seqalign ))
+
+    def _gaplc_regions( self, seqalign ):
+        """ Return only the gap and lowcoverage regions from a list of regions """
+        for region in seqalign.regions:
+            if region.rtype != 1:
+                yield region
+
+    def _low_coverage_mapping( self ):
+        for seq in self.ai.seqs:
+            reflen = self.wanted_idents.get( seq.name, None )
+            # If ref is not in wanted_idents then skip it
+            if reflen is None:
+                continue
+            
+            # If reference is not the same size as sequence bases
+            # Need to make region for the end
+            if len( seq.bases ) != reflen:
+                seq.regions.append( CoverageRegion( seq.regions[-1].end + 1, reflen, 0 ) )
+
+            yield seq
+
+    def _low_coverage_assembly( self ):
+        for seq in self.ai.seqs:
+            yield seq
+
+    def set_wanted_identifiers( self ):
+        """
+            Only interested in either references listed at the top
+            of 454RefStatus.txt(or all contig names if assembly)
+
+        """
+        # Use try catch to distinguish mapping vs assembly
+        # Also could just be a bad projDir fed in, but hey lets keep things interesting and
+        # assume that isn't the case
+        self.wanted_idents = {}
+        try:
+            rs = RefStatus( os.path.join( self.projDir, 'mapping', '454RefStatus.txt' ) )
+            ref = rs.get_likely_reference()
+
+            ref_file = reference_file_for_identifier( ref, self.projDir )
+            # Store each reference sequence name with its length
+            for seq in SeqIO.parse( ref_file, 'fasta' ):
+                self.wanted_idents[seq.id] = len( seq.seq )
+        except IOError as e:
+            self.wanted_idents = 'DENOVO'
 
 class LowCoverage:
     projDir = None
@@ -18,7 +92,8 @@ class LowCoverage:
     def __init__( self, projDir, reference, lct ):
         """
             >>> lc = LowCoverage( 'Examples/05_11_2012_1_TI-MID51_PR_2305_pH1N1', 'California', 100 )
-            >>> lc.printTSV()
+            >>> print len( lc.crTable )
+            154
         """
         self.projDir = projDir
         self.ref = reference

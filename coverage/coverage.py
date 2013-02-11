@@ -36,8 +36,13 @@ class AlignmentCoverage(object):
         else:
             seqgen = self._low_coverage_mapping( )
 
+        reflc = {}
         for seqalign in seqgen:
-            yield (seqalign.name, self._gaplc_regions( seqalign ))
+            if seqalign.name not in reflc:
+                reflc[seqalign.name] = []
+            [reflc[seqalign.name].append( region ) for region in self._gaplc_regions( seqalign )]
+
+        return reflc
 
     def _gaplc_regions( self, seqalign ):
         """ Return only the gap and lowcoverage regions from a list of regions """
@@ -54,7 +59,7 @@ class AlignmentCoverage(object):
             
             # If reference is not the same size as sequence bases
             # Need to make region for the end
-            if len( seq.bases ) != reflen:
+            if seq.regions[-1].end != reflen:
                 seq.regions.append( CoverageRegion( seq.regions[-1].end + 1, reflen, 0 ) )
 
             yield seq

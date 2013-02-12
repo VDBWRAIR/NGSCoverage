@@ -11,17 +11,33 @@ from wrairlib.fff.refstatus import RefStatus
 
 from coverage.coverage import AlignmentCoverage
 
-def main( ops ):
+def output_normal( ref, regions ):
+    print "Reference %s has the following low coverage regions:" % ref
+    for region in regions:
+        print "\t%s" % region
+
+def output_csv( ref, regions ):
+    print "%s,%s" % (ref, ','.join( [str(region) for region in regions] ))
+
+def output( ops ):
     ac = AlignmentCoverage( ops.dir, ops.lc )
-    for ref, regions in ac.find_low_coverage().items():
-        print "Reference %s has the following low coverage regions:" % ref
-        for region in sorted( regions ):
-            print "\t%s" % region
+    for ref, regions in ac.find_low_coverage():
+        # Skip regions with no low coverage or gaps
+        if not regions:
+            continue
+        if ops.csv:
+            output_csv( ref, regions )
+        else:
+            output_normal( ref, regions )
+
+def main( ops ):
+    output( ops )
 
 def getops( ):
     parser = ArgumentParser()
 
     parser.add_argument( '-d', '--dir', dest='dir', required=True, help='454 Project directory path to find gaps in' )
+    parser.add_argument( '-c', '--csv', dest='csv', default=False, action='store_true', help='Output in csv format' )
     parser.add_argument( '-lc', '--low-coverage', dest='lc', default=10, help='What is considered low coverage[Default: 10 reads]' )
 
     ops = parser.parse_args()

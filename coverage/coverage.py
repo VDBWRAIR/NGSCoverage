@@ -10,10 +10,57 @@ from Bio import SeqIO
 from wrairlib.fff.refstatus import RefStatus
 from wrairlib.fff.alignmentinfo import AlignmentInfo, CoverageRegion
 
+import glob
+
+
 # Default low coverage threshold
 MINREADDEPTH = 10
 
 class AlignmentCoverage(object):
+    """
+    >>> basepath = os.path.dirname( os.path.abspath( __file__ ) )
+    >>> pdir = glob.glob( '%s/Examples/05*' % basepath )[0]
+    >>> ac = AlignmentCoverage( pdir )
+    >>> ref_regions = ac.find_low_coverage()
+    >>> known_refregions = {
+    ... 'GQ377049_PB1_California04': [CoverageRegion(595, 632, 'LowCoverage'), CoverageRegion(1540, 1540, 'LowCoverage'), CoverageRegion(1541, 1575, 'Gap'), CoverageRegion(1576, 1714, 'LowCoverage')],
+    ... 'GQ117044_HA_California04': [CoverageRegion(718, 731, 'LowCoverage')],
+    ... 'FJ969515_PA_California04': [],
+    ... 'FJ969512_NP_California04': [],
+    ... 'FJ969516_PB2_California04': [CoverageRegion(1, 162, 'Gap'), CoverageRegion(1493, 1606, 'LowCoverage'), CoverageRegion(1607, 1684, 'Gap')],
+    ... 'FJ969513_MP_California04': [],
+    ... 'FJ969514_NS_California04': [CoverageRegion(842, 863, 'Gap')],
+    ... 'FJ969517_NA_California04': []
+    ... }
+    >>> for ref, regions in ref_regions:
+    ...   try:
+    ...     assert len( regions ) == len( known_refregions[ref] )
+    ...     for rregion, kregion in zip( regions, known_refregions[ref] ):
+    ...       assert rregion == kregion
+    ...   except AssertionError:
+    ...       print ref
+    ...       print regions
+    ...       print known_refregions[ref]
+    >>> pdir = glob.glob( '%s/Examples/08_31*' % basepath )[0]
+    >>> ac = AlignmentCoverage( pdir )
+    >>> ref_regions = ac.find_low_coverage()
+    >>> known_refregions = {
+    ... 'contig00001': [CoverageRegion(1,110,'LowCoverage'), CoverageRegion(1545,1571,'LowCoverage')],
+    ... 'contig00002': [CoverageRegion(1,15,'LowCoverage'), CoverageRegion(1390,1536,'LowCoverage')],
+    ... 'contig00003': [CoverageRegion(1,183,'LowCoverage'), CoverageRegion(1149,1150,'LowCoverage')]
+    ... }
+    >>> for ref, regions in ref_regions:
+    ...   if ref not in known_refregions:
+    ...     continue
+    ...   try:
+    ...     assert len( regions ) == len( known_refregions[ref] )
+    ...     for rregion, kregion in zip( regions, known_refregions[ref] ):
+    ...       assert rregion == kregion
+    ...   except AssertionError:
+    ...       print ref
+    ...       print regions
+    ...       print known_refregions[ref]
+    """
     def __init__( self, projDir, readLowCoverage = None ):
         self.projDir = projDir
 
@@ -31,42 +78,36 @@ class AlignmentCoverage(object):
         self.ai = AlignmentInfo( aipath )
 
     def find_low_coverage( self ):
+        """ Return only low coverage or gap regions """
+        # Get merged regions
+        mregions = self.ai.merge_regions()
         if self.wanted_idents == "DENOVO":
-            seqgen = self._low_coverage_assembly( )
+            return self._low_coverage_assembly( mregions )
         else:
-            seqgen = self._low_coverage_mapping( )
+            return self._low_coverage_mapping( mregions )
 
-        reflc = {}
-        for seqalign in seqgen:
-            if seqalign.name not in reflc:
-                reflc[seqalign.name] = []
-            [reflc[seqalign.name].append( region ) for region in self._gaplc_regions( seqalign )]
-
-        return reflc
-
-    def _gaplc_regions( self, seqalign ):
+    def _gaplc_regions( self, regions ):
         """ Return only the gap and lowcoverage regions from a list of regions """
-        for region in seqalign.regions:
-            if region.rtype != 1:
-                yield region
+        return [region for region in regions if region.rtype != 'Normal']
 
-    def _low_coverage_mapping( self ):
-        for seq in self.ai.seqs:
-            reflen = self.wanted_idents.get( seq.name, None )
+    def _low_coverage_mapping( self, mregions ):
+        for ref, regions in mregions.iteritems():
+            reflen = self.wanted_idents.get( ref, None )
             # If ref is not in wanted_idents then skip it
             if reflen is None:
                 continue
             
             # If reference is not the same size as sequence bases
             # Need to make region for the end
-            if seq.regions[-1].end != reflen:
-                seq.regions.append( CoverageRegion( seq.regions[-1].end + 1, reflen, 'Gap' ) )
+            if regions[-1].end != reflen:
+                reg = CoverageRegion( regions[-1].end + 1, reflen, 'Gap' )
+                regions.append( reg )
 
-            yield seq
+            yield (ref, self._gaplc_regions( regions ))
 
-    def _low_coverage_assembly( self ):
-        for seq in self.ai.seqs:
-            yield seq
+    def _low_coverage_assembly( self, mregions ):
+        for ref, regions in mregions.iteritems():
+            yield (ref, self._gaplc_regions( regions ))
 
     def set_wanted_identifiers( self ):
         """

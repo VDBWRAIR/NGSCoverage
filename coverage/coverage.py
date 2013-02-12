@@ -60,7 +60,7 @@ class AlignmentCoverage(object):
             # If reference is not the same size as sequence bases
             # Need to make region for the end
             if seq.regions[-1].end != reflen:
-                seq.regions.append( CoverageRegion( seq.regions[-1].end + 1, reflen, 0 ) )
+                seq.regions.append( CoverageRegion( seq.regions[-1].end + 1, reflen, 'Gap' ) )
 
             yield seq
 
@@ -79,8 +79,11 @@ class AlignmentCoverage(object):
         # assume that isn't the case
         self.wanted_idents = {}
         try:
-            rs = RefStatus( os.path.join( self.projDir, 'mapping', '454RefStatus.txt' ) )
+            refstatus = os.path.join( self.projDir, 'mapping', '454RefStatus.txt' )
+            rs = RefStatus( refstatus )
             ref = rs.get_likely_reference()
+            if ref is None:
+                return
 
             ref_file = reference_file_for_identifier( ref, self.projDir )
             # Store each reference sequence name with its length

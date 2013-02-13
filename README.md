@@ -1,25 +1,43 @@
 FindGap
 =======
-Find all gaps for a 454 Pipeline run
-
-How to read this file
-=====================
-Any line that begins with #> is something you run in the command line
-Any line that begins with > is an continuation line from a #> line
-All other lines are just text lines that are there as reference
+Find all gaps for a Roche 454 assembly or mapping project
 
 Prerequisites
 =============
 - pyWrairLib
 https://github.com/VDBWRAIR/pyWrairLib
 
+aligncoverage Usage
+===================
+
+aligncoverage utilizes the 454AlignmentInfo.tsv file to build a CoverageRegion for each contig that is located in the file.
+The way it determines a CoverageRegion's type is base on the depth of each base and is not easily configurable at this time. #TODO#
+If the project that is being analyzed is a Assembly then the AlignDepth is used otherwise the TotalDepth column is used. You can refer to the Roche documentation on all
+of the available fields.
+
+Since the 454AlignmentInfo.tsv file contains multiple contigs that coorespond to the same mapped reference(in a mapping project), aligncoverage merges all of the regions
+produced from all SeqAlignments for every reference.
+
+It then outputs those regions in human readable or csv format
+
 Usage
 =====
+#> aligncoverage -h
+usage: aligncoverage [-h] -d DIR [-c]
+
+optional arguments:
+  -h, --help         show this help message and exit
+  -d DIR, --dir DIR  454 Project directory path to find gaps in
+  -c, --csv          Output in csv format
+
+Usage is fairly straight forward and simple
+You have to provide it a Roche 454 project directory using the -d  or --dir option
+If you want csv output then also specify --csv or -c
+
+
+findgap Usage(deprecated)
+=============
 #>findgap.py -d <directory> -r <reference_name>
-<directory> should be a pipeline run directory such as any of the below:
-/some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia
-/some/project/dir/2012_06_22/FluB_Victoria
-/some/project/dir/2012_05_11/H3N2
 
 <reference_name> should be the reference that you want to find gaps for.
 You don't need to give it the full name of the reference file but you can.
@@ -49,13 +67,11 @@ reference files
 -r H1N1
 This would match both pdmH1N1_California.fasta as well as H1N1_boston.fasta
 
-
 Example Runs
 ============
 #> findgap.py -d /some/project/dir/2012_05_11/H3N2 -r managua
 #> findgap.py -d /some/project/dir/2012_06_22/FluB_Victoria -r bangladesh
 #> findgap.py -d /some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia -r cambodia
-
 
 Output
 ======
@@ -63,20 +79,6 @@ As with any Linux script you can redirect the output( using the > operator ) to 
 findgap.py -d /some/project/dir/2012_05_11/H3N2 -r managua > /some/project/dir/2012_05_11/H3N2/gaps.csv
 findgap.py -d /some/project/dir/2012_06_22/FluB_Victoria -r bangladesh > /some/project/dir/2012_06_22/FluB_Victoria/gaps.csv
 findgap.py -d /some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia -r cambodia > /some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia/gaps.csv
-
-Shortcuts
-=========
-If you don't want to type the full path to the 454 Pipeline run directory so much you can use the `pwd` shortcut
-`pwd` will insert the current path wherever you put it
-
-#> cd /some/project/dir/2012_05_11/H3N2 
-#> findgap.py -d `pwd` -r managua > `pwd`/gaps.csv
-
-#> cd /some/project/dir/2012_06_22/FluB_Victoria 
-#> findgap.py -d `pwd` -r bangladesh > `pwd`/gaps.csv
-
-#> cd /some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia 
-#> findgap.py -d `pwd` -r cambodia > `pwd`/gaps.csv
 
 Opening the Output
 ==================

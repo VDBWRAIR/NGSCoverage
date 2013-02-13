@@ -123,15 +123,21 @@ class AlignmentCoverage(object):
             refstatus = os.path.join( self.projDir, 'mapping', '454RefStatus.txt' )
             rs = RefStatus( refstatus )
             ref = rs.get_likely_reference()
-            if ref is None:
-                return
-
-            ref_file = reference_file_for_identifier( ref, self.projDir )
-            # Store each reference sequence name with its length
-            for seq in SeqIO.parse( ref_file, 'fasta' ):
-                self.wanted_idents[seq.id] = len( seq.seq )
         except IOError as e:
             self.wanted_idents = 'DENOVO'
+            return
+
+        if ref is None:
+            return
+
+        try:
+            ref_file = reference_file_for_identifier( ref, self.projDir )
+        except IOError as e:
+            sys.stderr.write( e.strerror + "\n" )
+            sys.exit( -1 )
+        # Store each reference sequence name with its length
+        for seq in SeqIO.parse( ref_file, 'fasta' ):
+            self.wanted_idents[seq.id] = len( seq.seq )
 
 class LowCoverage:
     projDir = None

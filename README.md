@@ -22,6 +22,7 @@ It then outputs those regions in human readable or csv format
 
 Usage
 =====
+```
 #> aligncoverage -h
 usage: aligncoverage [-h] -d DIR [-c]
 
@@ -29,6 +30,7 @@ optional arguments:
   -h, --help         show this help message and exit
   -d DIR, --dir DIR  454 Project directory path to find gaps in
   -c, --csv          Output in csv format
+```
 
 Usage is fairly straight forward and simple
 You have to provide it a Roche 454 project directory using the -d  or --dir option
@@ -56,10 +58,12 @@ If you have the following references:
 /some/project/dir/2012_05_11/H3N2/Ref/H1N1_boston.fasta
 
 The following would match the infB_Victoria.fasta reference
+```
 -r infB_Victoria.fasta
 -r infb_victoria.fasta
 -r victoria
 -r infb
+```
 
 As you can see the -r option is very flexible and matches as long as the value you give it is uniq among the
 reference files
@@ -69,16 +73,20 @@ This would match both pdmH1N1_California.fasta as well as H1N1_boston.fasta
 
 Example Runs
 ============
+```
 #> findgap.py -d /some/project/dir/2012_05_11/H3N2 -r managua
 #> findgap.py -d /some/project/dir/2012_06_22/FluB_Victoria -r bangladesh
 #> findgap.py -d /some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia -r cambodia
+```
 
 Output
 ======
 As with any Linux script you can redirect the output( using the > operator ) to a file which you will probably want to do
+```
 findgap.py -d /some/project/dir/2012_05_11/H3N2 -r managua > /some/project/dir/2012_05_11/H3N2/gaps.csv
 findgap.py -d /some/project/dir/2012_06_22/FluB_Victoria -r bangladesh > /some/project/dir/2012_06_22/FluB_Victoria/gaps.csv
 findgap.py -d /some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia -r cambodia > /some/project/dir/2012_07_19/R1R2_Den1_Ref_D1_IPCBIDV3786_2008_cambodia/gaps.csv
+```
 
 Opening the Output
 ==================

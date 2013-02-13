@@ -39,7 +39,9 @@ If you want csv output then also specify --csv or -c
 
 findgap Usage(deprecated)
 =============
+```
 #>findgap.py -d <directory> -r <reference_name>
+```
 
 <reference_name> should be the reference that you want to find gaps for.
 You don't need to give it the full name of the reference file but you can.

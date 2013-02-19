@@ -28,24 +28,25 @@ class CSVGapFile(object):
                     self.yaxis[rtype].append( lineno )
                     self.yaxis[rtype].append( lineno )
 
-    def makeScatter( self ):
+    def makeScatter( self, outputfile ):
         for rtype, values in self.xaxis.iteritems():
             plt.scatter( values, self.yaxis[rtype], s = 5, c = self.colors[rtype], marker = 'o' )
         fig = plt.gcf()
         fig.set_size_inches( 24, 12 )
-        plt.savefig( 'gaps.png', dpi=100 )
+        plt.savefig( outputfile, dpi=100 )
 
 def ops( ):
     parser = ArgumentParser()
 
     parser.add_argument( '--csv', dest='csvfile', required=True, help='CSV Gaps file to parse' )
+    parser.add_argument( '-o', dest='outputfile', required=False, default='gaps.png', help='Filepath to put output image[Default: ./gaps.png]' )
     
     return parser.parse_args()
 
 def main( ops ):
     g = CSVGapFile( ops.csvfile )
     g.parse()
-    g.makeScatter()
+    g.makeScatter( ops.outputfile )
 
 if __name__ == '__main__':
     ops = ops()

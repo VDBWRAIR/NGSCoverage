@@ -19,15 +19,18 @@ class CSVGapFile(object):
         # What about incorrect lines
         with open( self.filename ) as fh:
             for line in fh:
-                line = line.strip().split( ',' )
-                self.names.append( line[0] )
-                lineno = len( self.names )
-                for i in range( 1, len( line ), 3 ):
-                    start, end, rtype = line[i:i+3]
-                    self.xaxis[rtype].append( start )
-                    self.xaxis[rtype].append( end )
-                    self.yaxis[rtype].append( lineno )
-                    self.yaxis[rtype].append( lineno )
+                try:
+                    line = line.strip().split( ',' )
+                    self.names.append( line[0] )
+                    lineno = len( self.names )
+                    for i in range( 1, len( line ), 3 ):
+                        start, end, rtype = line[i:i+3]
+                        # Effectively put a point on every spot between start and end(inclusive)
+                        for x in range( int( start ), int( end ) + 1 ):
+                            self.xaxis[rtype].append( x )
+                            self.yaxis[rtype].append( lineno )
+                except ValueError:
+                    continue
 
     def makeScatter( self, outputfile ):
         for rtype, values in self.xaxis.iteritems():

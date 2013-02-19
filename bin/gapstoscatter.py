@@ -13,9 +13,10 @@ class CSVGapFile(object):
         # Line names. Stores the line number with the first column value in the gapfile
         self.names = []
 
-        self.colors = { 'LowCoverage': '#FDF5E6', 'Gap': '#FF0000' }
+        self.colors = { 'LowCoverage': '#000055', 'Gap': '#BA0000' }
 
     def parse( self ):
+        # What about incorrect lines
         with open( self.filename ) as fh:
             for line in fh:
                 line = line.strip().split( ',' )
@@ -30,10 +31,10 @@ class CSVGapFile(object):
 
     def makeScatter( self, outputfile ):
         for rtype, values in self.xaxis.iteritems():
-            plt.scatter( values, self.yaxis[rtype], s = 5, c = self.colors[rtype], marker = 'o' )
+            plt.scatter( values, self.yaxis[rtype], s = 5, c = self.colors[rtype], marker = 'o', edgecolors='none' )
         fig = plt.gcf()
         fig.set_size_inches( 24, 12 )
-        plt.savefig( outputfile, dpi=100 )
+        plt.savefig( outputfile, dpi=600 )
 
 def ops( ):
     parser = ArgumentParser()

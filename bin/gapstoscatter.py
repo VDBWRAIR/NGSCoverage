@@ -12,9 +12,20 @@ class CSVGapFile(object):
         self.yaxis = {'LowCoverage': [], 'Gap': []}
         # Line names. Stores the line number with the first column value in the gapfile
         self.names = []
+
         self.numsamples = 0
+        #ymax is same as numsamples so use property instead
+        self.ymin = -30
+        self.ystep = 10
+        self.xmin = -10
+        self.xmax = -1 
+        self.xstep = 100
 
         self.colors = { 'LowCoverage': '#000055', 'Gap': '#BA0000' }
+
+    @property
+    def ymax( self ):
+        return self.numsamples
 
     def parse( self ):
         # What about incorrect lines
@@ -27,6 +38,10 @@ class CSVGapFile(object):
                     # Loop through each range section(start, stop, type)
                     for i in range( 1, len( line ), 3 ):
                         start, end, rtype = line[i:i+3]
+                        start = int( start )
+                        end = int( end )
+                        # Get the maximum value for xaxis
+                        self.xmax = max( self.xmax, end )
                         # Effectively put a point on every spot between start and end(inclusive)
                         for x in range( int( start ), int( end ) + 1 ):
                             self.xaxis[rtype].append( x )
@@ -38,12 +53,12 @@ class CSVGapFile(object):
 
     def makeScatter( self, outputfile ):
         # Init some useful variables
-        xmin = 0
-        xmax = 2300
-        xstep = 100
-        ymin = 0
-        ymax = self.numsamples
-        ystep = 10
+        xmin = self.xmin
+        xmax = self.xmax
+        xstep = self.xstep
+        ymin = self.ymin
+        ymax = self.ymax
+        ystep = self.ystep
 
         fig, ax = plt.subplots()
 
@@ -62,15 +77,15 @@ class CSVGapFile(object):
         plt.minorticks_on()
 
         # Create the x and y tick locations
-        xticks = [i for i in range( xmin - xstep, xmax + xstep, xstep )]
-        yticks = [i for i in range( ymin - ystep, ymax + ystep, ystep )]
+        xticks = [i for i in range( self.xmin, self.xmax + self.xstep, self.xstep )]
+        yticks = [i for i in range( self.ymin, self.ymax + self.ystep, self.ystep )]
         plt.xticks( xticks, xticks )
         plt.yticks( yticks, yticks )
 
         # Get the 
         ca = fig.gca()
-        ca.set_xlim( xmin - xstep, xmax + xstep )
-        ca.set_ylim( ymin - ystep, ymax + ystep )
+        ca.set_xlim( self.xmin, self.xmax + self.xstep )
+        ca.set_ylim( self.ymin, self.ymax + self.ystep )
 
         # Place legend in lower left(loc = 3)
         plt.legend( loc=3 )

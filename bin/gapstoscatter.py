@@ -12,6 +12,7 @@ class CSVGapFile(object):
         self.yaxis = {'LowCoverage': [], 'Gap': []}
         # Line names. Stores the line number with the first column value in the gapfile
         self.names = []
+        self.numsamples = 0
 
         self.colors = { 'LowCoverage': '#000055', 'Gap': '#BA0000' }
 
@@ -23,20 +24,47 @@ class CSVGapFile(object):
                     line = line.strip().split( ',' )
                     self.names.append( line[0] )
                     lineno = len( self.names )
+                    # Loop through each range section(start, stop, type)
                     for i in range( 1, len( line ), 3 ):
                         start, end, rtype = line[i:i+3]
                         # Effectively put a point on every spot between start and end(inclusive)
                         for x in range( int( start ), int( end ) + 1 ):
                             self.xaxis[rtype].append( x )
                             self.yaxis[rtype].append( lineno )
+                    # Keep track of how many samples are processed
+                    self.numsamples += 1
                 except ValueError:
                     continue
 
     def makeScatter( self, outputfile ):
+        # Init some useful variables
+        xmin = 0
+        xmax = 2300
+        xstep = 100
+        ymin = 0
+        ymax = self.numsamples
+        ystep = 10
+
+        # Plot out the points
         for rtype, values in self.xaxis.iteritems():
             plt.scatter( values, self.yaxis[rtype], s = 5, c = self.colors[rtype], marker = 'o', edgecolors='none' )
+
+        # Grab the figure object from the plot
         fig = plt.gcf()
         fig.set_size_inches( 24, 12 )
+        plt.tight_layout( )
+        plt.minorticks_on()
+
+        # Create the x and y tick locations
+        xticks = [i for i in range( xmin, xmax + xstep, xstep )]
+        yticks = [i for i in range( ymin, ymax + ystep, ystep )]
+        plt.xticks( xticks, xticks )
+        plt.yticks( yticks, yticks )
+
+        # Get the 
+        ca = fig.gca()
+        ca.set_xlim( xmin, xmax )
+        ca.set_ylim( ymin, ymax )
         plt.savefig( outputfile, dpi=600 )
 
 def ops( ):

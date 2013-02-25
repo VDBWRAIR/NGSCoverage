@@ -45,26 +45,35 @@ class CSVGapFile(object):
         ymax = self.numsamples
         ystep = 10
 
+        fig, ax = plt.subplots()
+
         # Plot out the points
         for rtype, values in self.xaxis.iteritems():
-            plt.scatter( values, self.yaxis[rtype], s = 5, c = self.colors[rtype], marker = 'o', edgecolors='none' )
+            ax.scatter( values, self.yaxis[rtype], s = 5, c = self.colors[rtype], marker = 'o', edgecolors='none', label=rtype )
+
+        ax.set_title( 'Gap/Low Coverage for %s' % self.filename )
+        ax.set_xlabel( 'Nucleotide Position' )
+        ax.set_ylabel( 'Sample Index Number' )
 
         # Grab the figure object from the plot
-        fig = plt.gcf()
+        #fig = plt.gcf()
         fig.set_size_inches( 24, 12 )
         plt.tight_layout( )
         plt.minorticks_on()
 
         # Create the x and y tick locations
-        xticks = [i for i in range( xmin, xmax + xstep, xstep )]
-        yticks = [i for i in range( ymin, ymax + ystep, ystep )]
+        xticks = [i for i in range( xmin - xstep, xmax + xstep, xstep )]
+        yticks = [i for i in range( ymin - ystep, ymax + ystep, ystep )]
         plt.xticks( xticks, xticks )
         plt.yticks( yticks, yticks )
 
         # Get the 
         ca = fig.gca()
-        ca.set_xlim( xmin, xmax )
-        ca.set_ylim( ymin, ymax )
+        ca.set_xlim( xmin - xstep, xmax + xstep )
+        ca.set_ylim( ymin - ystep, ymax + ystep )
+
+        # Place legend in lower left(loc = 3)
+        plt.legend( loc=3 )
         plt.savefig( outputfile, dpi=600 )
 
 def ops( ):

@@ -135,6 +135,12 @@ class AlignmentCoverage(object):
         except IOError as e:
             sys.stderr.write( e.strerror + "\n" )
             sys.exit( -1 )
+
+        # Check in case the reference name in 454RefStatus.txt is different than the refrence identifier
+        # in the fasta file
+        if ref_file is None:
+            return
+
         # Store each reference sequence name with its length
         for seq in SeqIO.parse( ref_file, 'fasta' ):
             self.wanted_idents[seq.id] = len( seq.seq )

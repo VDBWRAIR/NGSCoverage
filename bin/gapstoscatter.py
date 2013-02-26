@@ -16,16 +16,22 @@ class CSVGapFile(object):
         self.numsamples = 0
         #ymax is same as numsamples so use property instead
         self.ymin = -30
-        self.ystep = 10
         self.xmin = -10
         self.xmax = -1 
-        self.xstep = 100
 
         self.colors = { 'LowCoverage': '#000055', 'Gap': '#BA0000' }
 
     @property
     def ymax( self ):
         return self.numsamples
+
+    @property
+    def xstep( self ):
+        return max( (self.xmax - self.xmin) / 100, 1)
+
+    @property
+    def ystep( self ):
+        return max((self.ymax - self.ymin) / 10, 1)
 
     def parse( self ):
         # What about incorrect lines
@@ -51,7 +57,7 @@ class CSVGapFile(object):
                 except ValueError:
                     continue
 
-    def makeScatter( self, outputfile ):
+    def makeScatter( self, outputfile, title = 'Gap / Low Coverage Plot' ):
         # Init some useful variables
         xmin = self.xmin
         xmax = self.xmax
@@ -62,11 +68,11 @@ class CSVGapFile(object):
 
         fig, ax = plt.subplots()
 
-        # Plot out the points
+        # Plot out the points for gap/low coverage
         for rtype, values in self.xaxis.iteritems():
             ax.scatter( values, self.yaxis[rtype], s = 5, c = self.colors[rtype], marker = 'o', edgecolors='none', label=rtype )
 
-        ax.set_title( 'Gap/Low Coverage for %s' % self.filename )
+        ax.set_title( 'Gap/Low Coverage for %s' % title )
         ax.set_xlabel( 'Nucleotide Position' )
         ax.set_ylabel( 'Sample Index Number' )
 
@@ -79,7 +85,7 @@ class CSVGapFile(object):
         # Create the x and y tick locations
         xticks = [i for i in range( self.xmin, self.xmax + self.xstep, self.xstep )]
         yticks = [i for i in range( self.ymin, self.ymax + self.ystep, self.ystep )]
-        plt.xticks( xticks, xticks )
+        plt.xticks( xticks, xticks, rotation='vertical' )
         plt.yticks( yticks, yticks )
 
         # Get the 
@@ -96,13 +102,14 @@ def ops( ):
 
     parser.add_argument( '--csv', dest='csvfile', required=True, help='CSV Gaps file to parse' )
     parser.add_argument( '-o', dest='outputfile', required=False, default='gaps.png', help='Filepath to put output image[Default: ./gaps.png]' )
+    parser.add_argument( '-t', '--title', dest='title', required=False, default=None, help='Title for the scatterplot' )
     
     return parser.parse_args()
 
 def main( ops ):
     g = CSVGapFile( ops.csvfile )
     g.parse()
-    g.makeScatter( ops.outputfile )
+    g.makeScatter( ops.outputfile, ops.title )
 
 if __name__ == '__main__':
     ops = ops()

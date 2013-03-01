@@ -34,6 +34,7 @@ setup(
         "numpy >=1.6",
         "biopython >=1.59",
         "wrairlib >= 0.0.5",
+        'matplotlib',
     ],
     long_description=read('README.md'),
 )

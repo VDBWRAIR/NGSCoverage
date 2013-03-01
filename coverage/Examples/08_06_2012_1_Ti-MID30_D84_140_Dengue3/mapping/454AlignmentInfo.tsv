@@ -1,5 +1,5 @@
 Position	Reference	Consensus	Quality Score	Unique Depth	Align Depth	Total Depth	Signal	StdDeviation
->D3_KDC0070A_Thailand 	1
+>AADen3_KDC0070A_Thailand 	1
 1	G	G	64	3	57	57	0.92	0.14
 2	A	A	64	3	57	57	0.91	0.12
 3	C	C	64	3	57	57	0.85	0.12
@@ -2941,7 +2941,7 @@ Position	Reference	Consensus	Quality Score	Unique Depth	Align Depth	Total Depth	
 2852	-	A	39	1	2	2	0.85	0.12
 2852	G	G	64	1	2	2	1.05	0.04
 2853	A	A	64	1	2	2	0.95	0.09
->D3_KDC0070A_Thailand 	2879
+>AADen3_KDC0070A_Thailand 	2879
 2879	T	T	64	3	20	20	0.97	0.12
 2880	T	-	64	3	20	20	0.97	0.12
 2881	C	C	64	3	21	21	1.03	0.14

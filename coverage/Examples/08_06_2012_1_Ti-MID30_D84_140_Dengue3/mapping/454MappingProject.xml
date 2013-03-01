@@ -3,7 +3,7 @@
 
   <ProjectInformation>
     <ProjectType>Mapping</ProjectType>
-    <ProjectDirectory>/home/EIDRUdata/Data_seq454/2012_08_06/R1R2_Den3_Ref_D3_KDC0070A_Thailand/08_06_2012_1_Ti-MID30_D84_140_Dengue3</ProjectDirectory>
+    <ProjectDirectory>08_06_2012_1_Ti-MID30_D84_140_Dengue3</ProjectDirectory>
     <dateCreated>Wed Aug  8 15:13:38 2012</dateCreated>
     <dateModified>Wed Aug  8 15:13:40 2012</dateModified>
     <SoftwareVersion>2.5.3 (20101207_1124)</SoftwareVersion>
@@ -62,7 +62,7 @@
   <ReferenceFiles>
     <SetRefCount>1</SetRefCount>
     <File>
-      <Path>/home/EIDRUdata/Data_seq454/2012_08_06/R1R2_Den3_Ref_D3_KDC0070A_Thailand/Ref/D3_KDC0070A_Thailand.fasta</Path>
+      <Path>../Ref/D3_KDC0070A_Thailand.fasta</Path>
       <Type>Fasta</Type>
     </File>
   </ReferenceFiles>
@@ -71,7 +71,7 @@
     <SetReadCount>1</SetReadCount>
     <File>
       <SFFDirFilename>08_06_2012_1_Ti-MID30_D84_140_Dengue3.sff</SFFDirFilename>
-      <Path>/home/EIDRUdata/Data_seq454/2012_08_06/R1R2_Den3_Ref_D3_KDC0070A_Thailand/08_06_2012_1_Ti-MID30_D84_140_Dengue3/sff/08_06_2012_1_Ti-MID30_D84_140_Dengue3.sff</Path>
+      <Path>../sff/08_06_2012_1_Ti-MID30_D84_140_Dengue3.sff</Path>
       <Type>SFF</Type>
       <IsPairedEnd>false</IsPairedEnd>
       <Rescore>false</Rescore>

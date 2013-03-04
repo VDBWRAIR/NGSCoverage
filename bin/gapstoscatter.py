@@ -141,6 +141,7 @@ class CSVGapFile(object):
         plt.yticks( yticks, yticks )
         yaxis = self.ax.get_yaxis()
         yaxis.set_ticklabels( [l for i,l in self.yaxislabels] )
+        yaxis.grid( color='grey' )
 
         xticks = [i for i in range( 0, self.xmax + self.xstep, self.xstep )]
         plt.xticks( xticks, xticks, rotation='vertical' )
@@ -152,7 +153,7 @@ class CSVGapFile(object):
         #self.ax.set_xlim( self.xmin, self.xmax + self.xstep )
 
         # Place legend in lower left(loc = 3)
-        #plt.legend( loc=3 )
+        plt.legend( loc=3, ncol=4 )
         plt.tight_layout( )
         plt.margins( 0.05, 0.5 )
         plt.savefig( outputfile, dpi=dpi )

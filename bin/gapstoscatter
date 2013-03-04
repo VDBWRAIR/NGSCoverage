@@ -135,8 +135,14 @@ class CSVGapFile(object):
         # Get the interval to work with
         s, e = axisinstance.get_data_interval()
         datainterval = float( e - s )
+        if datainterval == 0:
+            datainterval = 1
         # Return the ratio to be used with axes.set_?margin()
-        return inchesdesired / datainterval
+        try:
+            return inchesdesired / datainterval
+        except ZeroDivisionError as e:
+            sys.stderr.write( "Axis data interval was: %s\n" % axisinstance.get_data_interval() )
+            raise e
 
     def save_png( self, outputfile, title = 'Gap / Low Coverage Plot' , dpi=100 ):
         yaxis = self.ax.get_yaxis()
@@ -170,7 +176,7 @@ class CSVGapFile(object):
         self.ax.legend(loc='upper center', bbox_to_anchor=(0.2, -0.125), fancybox=True, shadow=True, ncol=4)
 
         ymargin = self.get_axis_margin( yaxis, 1 ) 
-        plt.margins( ymargin )
+        plt.margins( 0, ymargin )
         plt.savefig( outputfile, dpi=dpi )
 
 def ops( ):

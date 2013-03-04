@@ -42,14 +42,6 @@ class FindGaps:
         """
             Sets the sample directories from the given main directory
 
-
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> len( fg.sample_dirs )
-            48
-
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2010_01_15/CoInfection_reAnalysis/', 'california' )
-            >>> len( fg.sample_dirs )
-            14
         """
         contents = list_dir( self.dir )
         if self.single:
@@ -65,13 +57,6 @@ class FindGaps:
         """
             Set the reference using the given reference or infer it from 454RefStatus.txt
         
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'manag' )
-            >>> fg.reference_path
-            '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/Ref/H3N2_Managua.fasta'
-            
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', None )
-            >>> fg.reference_path
-            '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/Ref/H3N2_Managua.fasta'
         """
         # If the reference is blank then it indicates
         # that it should be automatically found using 454RefStatus file
@@ -140,38 +125,6 @@ class FindGaps:
                 Dictionary keyed Contig,Ref,Read_Start,Read_End,Length,Num_Reads
 
             Tests:
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> a = fg.parse_description( "contig00001  FJ969516_PB2_California04, 163..1606  length=1443   numreads=1168" )
-            >>> for k in sorted( a.keys() ):
-            ...  print "%s => %s" % (k, a[k])
-            Contig => contig00001
-            Length => 1443
-            Num_Reads => 1168
-            Read_End => 1606
-            Read_Start => 163
-            Ref => FJ969516_PB2_California04
-
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> b = fg.parse_description( "contig00015  Human/1_(PB2)/H5N1/1/Thailand/2004, 2209..2333  length=123   numreads=26" )
-            >>> for k in sorted( b.keys() ):
-            ...  print "%s => %s" % (k, b[k])
-            Contig => contig00015
-            Length => 123
-            Num_Reads => 26
-            Read_End => 2333
-            Read_Start => 2209
-            Ref => Human/1_(PB2)/H5N1/1/Thailand/2004
-
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> b = fg.parse_description( "contig00001  CY018765_B/Yamagata/16/1988/4(HA), 523..795  length=273   numreads=2" )
-            >>> for k in sorted( b.keys() ):
-            ...  print "%s => %s" % (k, b[k])
-            Contig => contig00001
-            Length => 273
-            Num_Reads => 2
-            Read_End => 795
-            Read_Start => 523
-            Ref => CY018765_B/Yamagata/16/1988/4(HA)
        """
         parsed_description = None
         patterns = []
@@ -242,10 +195,6 @@ class FindGaps:
         """
             Returns a uniq set of Gene names gathered from all the reference files
             
-            Tests:
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> fg.get_uniq_keys()
-            ['FJ969512_NP_California04', 'FJ969513_MP_California04', 'FJ969514_NS_California04', 'FJ969515_PA_California04', 'FJ969516_PB2_California04', 'FJ969517_NA_California04', 'GQ117044_HA_California04', 'GQ377049_PB1_California04']
         """
         genes = get_idents_from_reference( self.reference_path )
         return sorted( set( genes ) )
@@ -254,29 +203,6 @@ class FindGaps:
         """
             Returns the gaps for a set of reads
             A set of reads will always start from 1 and go to ref_len
-
-            Tests:
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> a = fg.get_gaps_from_reads( {'Reads': [(5,10)], 'Ref_Length': 10}, 'Test' )
-            >>> zip( a.keys(), a.values() )
-            [('Test_1_Start', 1), ('Test_1_End', 4)]
-            >>> a = fg.get_gaps_from_reads( {'Reads': [(1,4),(7,10)], 'Ref_Length': 10}, 'Test' )
-            >>> zip( a.keys(), a.values() )
-            [('Test_1_Start', 5), ('Test_1_End', 6)]
-            >>> a = fg.get_gaps_from_reads( {'Reads': [(1,5),(7,10)], 'Ref_Length': 10}, 'Test' )
-            >>> zip( a.keys(), a.values() )
-            [('Test_1_Start', 6), ('Test_1_End', 6)]
-            >>> a = fg.get_gaps_from_reads( {'Reads': [(1,5)], 'Ref_Length': 10}, 'Test' )
-            >>> zip( a.keys(), a.values() )
-            [('Test_1_Start', 6), ('Test_1_End', 10)]
-            >>> a = fg.get_gaps_from_reads( {'Reads': [(5,7)], 'Ref_Length': 10}, 'Test' )
-            >>> zip( a.keys(), a.values() )
-            [('Test_1_Start', 1), ('Test_2_Start', 8), ('Test_1_End', 4), ('Test_2_End', 10)]
-            >>> a = fg.get_gaps_from_reads( {'Reads': [(1,2),(5,7),(10,12)], 'Ref_Length': 12}, 'Test' )
-            >>> zip( a.keys(), a.values() )
-            [('Test_1_Start', 3), ('Test_2_Start', 8), ('Test_1_End', 4), ('Test_2_End', 9)]
-            >>> fg.get_gaps_from_reads( {'Reads': [(1,10)], 'Ref_Length': 10}, 'Test' )
-            {}
         """
         # Extract the reads
         reads = read_info['Reads']
@@ -327,10 +253,6 @@ class FindGaps:
                                 'Gene2': ...
                               }
             }
-            Tests:
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> fg.get_all_gaps()['PR_2390']
-            {'GQ377049_PB1_California04': {'GQ377049_PB1_California04_1_Start': 1, 'GQ377049_PB1_California04_2_Start': 2272, 'GQ377049_PB1_California04_1_End': 2038, 'GQ377049_PB1_California04_2_End': 2274}, 'GQ117044_HA_California04': {}, 'FJ969515_PA_California04': {}, 'FJ969512_NP_California04': {}, 'FJ969516_PB2_California04': {}, 'FJ969513_MP_California04': {}, 'FJ969514_NS_California04': {'FJ969514_NS_California04_2_Start': 633, 'FJ969514_NS_California04_1_Start': 1, 'FJ969514_NS_California04_2_End': 742, 'FJ969514_NS_California04_1_End': 211}, 'FJ969517_NA_California04': {}}
         """
         if self.single:
             self._parse_single()
@@ -368,8 +290,6 @@ class FindGaps:
             Outputs csv formatted gaps
             
             Tests:
-            >>> fg = FindGaps( '/home/EIDRUdata/Data_seq454/2012_05_11/H3N2/', 'california' )
-            >>> fg.output_csv()
         """
         # Filler string
         csv = ""

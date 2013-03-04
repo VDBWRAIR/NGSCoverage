@@ -4,7 +4,7 @@
 **         Newbler Metrics Results
 **
 **      Date of Assembly: 2012/09/04 16:17:20
-**      Project Directory: /home/EIDRUdata/Data_seq454/2012_08_31/R3R4Rx_combo_Denovo/08_31_2012_3_RL10_600Yu_10_VOID
+**      Project Directory: 08_31_2012_3_RL10_600Yu_10_VOID
 **      Software Release: 2.5.3 (20101207_1124)
 **
 ***************************************************************************/
@@ -17,7 +17,7 @@ runData
 {
 	file
 	{
-		path = "/home/EIDRUdata/Data_seq454/2012_08_31/R3R4Rx_combo_Denovo/08_31_2012_3_RL10_600Yu_10_VOID/sff/08_31_2012_3_RL10_600Yu_10_VOID.sff";
+		path = "08_31_2012_3_RL10_600Yu_10_VOID/sff/08_31_2012_3_RL10_600Yu_10_VOID.sff";
 
 		numberOfReads = 12991, 12857;
 		numberOfBases = 3066345, 2616821;
@@ -45,7 +45,7 @@ readAlignmentResults
 {
 	file
 	{
-		path = "/home/EIDRUdata/Data_seq454/2012_08_31/R3R4Rx_combo_Denovo/08_31_2012_3_RL10_600Yu_10_VOID/sff/08_31_2012_3_RL10_600Yu_10_VOID.sff";
+		path = "08_31_2012_3_RL10_600Yu_10_VOID/sff/08_31_2012_3_RL10_600Yu_10_VOID.sff";
 
 		numAlignedReads     = 12067, 93.86%;
 		numAlignedBases     = 2468913, 94.35%;

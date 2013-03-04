@@ -1,5 +1,5 @@
 Assembly computation starting at: Tue Sep 4 16:17:19 2012  (v2.5.3 (20101207_1124))
-Reading trimming database: /home/EIDRUdata/Primers/RandomRT-PCR-termini_JH_Mar2011.fna
+Reading trimming database: RandomRT-PCR-termini_JH_Mar2011.fna
   -> seqs: 2 , bases: 42
 Setting up trimming/screening overlap detection...
 Indexing/Screening 08_31_2012_3_RL10_600Yu_10_VOID.sff...

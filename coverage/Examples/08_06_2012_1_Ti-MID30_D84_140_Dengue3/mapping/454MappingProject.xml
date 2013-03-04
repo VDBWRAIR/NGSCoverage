@@ -45,7 +45,7 @@
     <backwardCompatibleContigging>false</backwardCompatibleContigging>
     <finishMode>false</finishMode>
     <autoTrimming>true</autoTrimming>
-    <VectorDatabase>/home/EIDRUdata/Primers/Den_primers/D3_FD_HS20120808.fna</VectorDatabase>
+    <VectorDatabase>../Primer/Den3.fna</VectorDatabase>
     <screeningDatabase/>
     <haplotypeFile/>
     <targetedRegionFile/>

@@ -4,7 +4,7 @@
 **         Newbler Metrics Results
 **
 **      Date of Mapping: 2012/08/08 15:13:40
-**      Project Directory: /home/EIDRUdata/Data_seq454/2012_08_06/R1R2_Den3_Ref_D3_KDC0070A_Thailand/08_06_2012_1_Ti-MID30_D84_140_Dengue3
+**      Project Directory: 08_06_2012_1_Ti-MID30_D84_140_Dengue3
 **      Software Release: 2.5.3 (20101207_1124)
 **
 ***************************************************************************/
@@ -17,7 +17,7 @@ referenceSequenceData
 {
 	file
 	{
-		path = "/home/EIDRUdata/Data_seq454/2012_08_06/R1R2_Den3_Ref_D3_KDC0070A_Thailand/Ref/D3_KDC0070A_Thailand.fasta";
+		path = "Ref/D3_KDC0070A_Thailand.fasta";
 		numberOfReads = 1;
 		numberOfBases = 10665;
 	}
@@ -28,7 +28,7 @@ runData
 {
 	file
 	{
-		path = "/home/EIDRUdata/Data_seq454/2012_08_06/R1R2_Den3_Ref_D3_KDC0070A_Thailand/08_06_2012_1_Ti-MID30_D84_140_Dengue3/sff/08_06_2012_1_Ti-MID30_D84_140_Dengue3.sff";
+		path = "08_06_2012_1_Ti-MID30_D84_140_Dengue3/sff/08_06_2012_1_Ti-MID30_D84_140_Dengue3.sff";
 
 		numberOfReads = 15441, 14566;
 		numberOfBases = 4807474, 4096089;
@@ -59,7 +59,7 @@ readMappingResults
 {
 	file
 	{
-		path = "/home/EIDRUdata/Data_seq454/2012_08_06/R1R2_Den3_Ref_D3_KDC0070A_Thailand/08_06_2012_1_Ti-MID30_D84_140_Dengue3/sff/08_06_2012_1_Ti-MID30_D84_140_Dengue3.sff";
+		path = "08_06_2012_1_Ti-MID30_D84_140_Dengue3/sff/08_06_2012_1_Ti-MID30_D84_140_Dengue3.sff";
 
 		numMappedReads     = 13926, 95.61%;
 		numMappedBases     = 4014984, 98.02%;

@@ -3,7 +3,7 @@
 
   <ProjectInformation>
     <ProjectType>Assembly</ProjectType>
-    <ProjectDirectory>/home/EIDRUdata/Data_seq454/2012_08_31/R3R4Rx_combo_Denovo/08_31_2012_3_RL10_600Yu_10_VOID</ProjectDirectory>
+    <ProjectDirectory>08_31_2012_3_RL10_600Yu_10_VOID</ProjectDirectory>
     <dateCreated>Tue Sep  4 16:17:19 2012</dateCreated>
     <dateModified>Tue Sep  4 16:17:20 2012</dateModified>
     <SoftwareVersion>2.5.3 (20101207_1124)</SoftwareVersion>
@@ -45,7 +45,7 @@
     <backwardCompatibleContigging>false</backwardCompatibleContigging>
     <finishMode>false</finishMode>
     <autoTrimming>true</autoTrimming>
-    <VectorDatabase>/home/EIDRUdata/Primers/RandomRT-PCR-termini_JH_Mar2011.fna</VectorDatabase>
+    <VectorDatabase>../Primer/denovo.fna</VectorDatabase>
     <screeningDatabase/>
     <haplotypeFile/>
     <targetedRegionFile/>
@@ -67,7 +67,7 @@
     <SetReadCount>1</SetReadCount>
     <File>
       <SFFDirFilename>08_31_2012_3_RL10_600Yu_10_VOID.sff</SFFDirFilename>
-      <Path>/home/EIDRUdata/Data_seq454/2012_08_31/R3R4Rx_combo_Denovo/08_31_2012_3_RL10_600Yu_10_VOID/sff/08_31_2012_3_RL10_600Yu_10_VOID.sff</Path>
+      <Path>08_31_2012_3_RL10_600Yu_10_VOID/sff/08_31_2012_3_RL10_600Yu_10_VOID.sff</Path>
       <Type>SFF</Type>
       <IsPairedEnd>false</IsPairedEnd>
       <Rescore>false</Rescore>

@@ -172,7 +172,9 @@ def main( ops ):
     g = CSVGapFile( ops.csvfile, ops.primerfile )
     g.parse_csv()
     g.makeScatter()
-    g.plotPrimers()
+    # Don't plot primer if no primerfile
+    if ops.primerfile:
+        g.plotPrimers()
     g.save_png( ops.outputfile, ops.title )
 
 if __name__ == '__main__':

@@ -3,6 +3,18 @@ NGS Coverage
 Find all gaps for a Roche 454 assembly or mapping project
 Eventually, will accept BAM/SAM file too
 
+Example Images
+==============
+
+Many Samples of the Same type with the Primer graphed at the bottom
+-------------------------------------------------------------------
+
+![Many Samples With Primer](https://github.com/VDBWRAIR/NGSCoverage/raw/master/coverage/Examples/testgraphs/allh3n2pb1withprimer.png)
+
+Single Sample With primer
+-------------------------
+![Single Sample With Primer](https://github.com/VDBWRAIR/NGSCoverage/raw/master/coverage/Examples/testgraphs/mid51withprimer.png)
+
 Prerequisites
 =============
 Please check under setup.py inside of install_requires for details on what python packages are required.

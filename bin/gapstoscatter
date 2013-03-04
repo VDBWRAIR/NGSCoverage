@@ -152,7 +152,7 @@ class CSVGapFile(object):
 
         width = 25
         # Lower limit for height is 4 inches, upper limit is 14 inches
-        height = min( max( 0.35 * len( yticks ), 4 ), 25 )
+        height = min( max( 0.35 * len( yticks ), 4 ), 20 )
         self.fig.set_size_inches( width, height )
 
         # Create the x and y tick locations

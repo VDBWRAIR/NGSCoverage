@@ -12,7 +12,10 @@ aligncoverage
 ===================
 
 aligncoverage utilizes the 454AlignmentInfo.tsv file to build a CoverageRegion for each contig that is located in the file.
-The way it determines a CoverageRegion's type is base on the depth of each base and is not easily configurable at this time. #TODO#
+The way it determines a CoverageRegion's type is base on the depth of each base and is not easily configurable at this time.
+
+See: [Configurable LowCoverage](https://github.com/VDBWRAIR/NGSCoverage/issues/1)
+
 If the project that is being analyzed is a Assembly then the AlignDepth is used otherwise the TotalDepth column is used. You can refer to the Roche documentation on all
 of the available fields.
 

@@ -127,19 +127,31 @@ class CSVGapFile(object):
                 self.ax.plot( x, y, color=self.linestyle[rtype]['color'], label=label, lw=self.linestyle[rtype]['width'] )
                 label=''
 
+    def get_axis_margin( self, axisinstance, inchesdesired ):
+        '''
+            Given an axis intstance and inches desired change the margin for that axis
+            so it matches the inches desired
+        '''
+        # Get the interval to work with
+        s, e = axisinstance.get_data_interval()
+        datainterval = float( e - s )
+        # Return the ratio to be used with axes.set_?margin()
+        return inchesdesired / datainterval
 
-    def save_png( self, outputfile, title = 'Gap / Low Coverage Plot' , dpi=300 ):
+    def save_png( self, outputfile, title = 'Gap / Low Coverage Plot' , dpi=100 ):
+        yaxis = self.ax.get_yaxis()
+        xaxis = self.ax.get_xaxis()
+
         yticks = [i for i,l in self.yaxislabels]
 
         width = 25
-        height = max( 0.35 * len( yticks ), 4 )
+        # Lower limit for height is 4 inches, upper limit is 14 inches
+        height = min( max( 0.35 * len( yticks ), 4 ), 25 )
         self.fig.set_size_inches( width, height )
-        #plt.minorticks_on()
 
         # Create the x and y tick locations
         yticks = [i for i,l in self.yaxislabels]
         plt.yticks( yticks, yticks )
-        yaxis = self.ax.get_yaxis()
         yaxis.set_ticklabels( [l for i,l in self.yaxislabels] )
         yaxis.grid( color='grey' )
 
@@ -149,13 +161,16 @@ class CSVGapFile(object):
         self.ax.set_title( 'Gap/Low Coverage for %s' % title )
         self.ax.set_xlabel( 'Nucleotide Position' )
         self.ax.set_ylabel( 'Sample Index Number' )
+        plt.tight_layout( pad=3 )
 
-        #self.ax.set_xlim( self.xmin, self.xmax + self.xstep )
+        # Shink current axis's height by 10% on the bottom
+        box = self.ax.get_position()
+        self.ax.set_position([box.x0, box.y0 + box.height * 0.15, box.width, box.height * 0.85])
+        # Put a legend below current axis
+        self.ax.legend(loc='upper center', bbox_to_anchor=(0.2, -0.125), fancybox=True, shadow=True, ncol=4)
 
-        # Place legend in lower left(loc = 3)
-        plt.legend( loc=3, ncol=4 )
-        plt.tight_layout( )
-        plt.margins( 0.05, 0.5 )
+        ymargin = self.get_axis_margin( yaxis, 1 ) 
+        plt.margins( ymargin )
         plt.savefig( outputfile, dpi=dpi )
 
 def ops( ):

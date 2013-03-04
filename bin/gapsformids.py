@@ -77,7 +77,7 @@ def ops():
     parser = ArgumentParser()
 
     cpus = multiprocessing.cpu_count() - 1
-    parser.add_argument( '-i', '--index', dest='index', default=sys.stdin, help='Eidru data file index to use. Defaults to standard input' )
+    parser.add_argument( '-i', '--index', dest='index', default=sys.stdin, help='Index to use. Defaults to standard input' )
     parser.add_argument( '--cpus', dest='cpus', default=cpus, type=int, help='Number of cpus to use[Default: %s]' % cpus )
     parser.add_argument( '-o', '--output', dest='outputdir', default=None, help='Output directory[Default: Current directory]' )
 

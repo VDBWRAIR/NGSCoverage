@@ -23,5 +23,8 @@ echo "Generating allh3n2pb1withprimer.png"
 ${bindir}/gapstoscatter --csv ../pb1_allh3n22012.csv -p ${primerdir}/H3N2.fasta -o ${thisdir}/allh3n2pb1withprimer.png
 echo "Generating allh3n2pb1withoutprimer.png"
 ${bindir}/gapstoscatter --csv ../pb1_allh3n22012.csv -o ${thisdir}/allh3n2pb1withoutprimer.png
+        
+echo H3N2__Indiana__2011__NS.png
+${bindir}/gapstoscatter --csv ../H3N2__Indiana__2011__NS.gaps -o ${thisdir}/H3N2__Indiana__2011__NS.png
 
 popd

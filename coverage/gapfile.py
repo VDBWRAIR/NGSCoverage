@@ -71,7 +71,7 @@ class CSVGapFile(object):
                         start, end, rtype = line[i:i+3]
                         start = int( start )
                         end = int( end )
-                        # Get the maximum value for xaxis
+                        # self.xmax will be the maximum value found at the end of the loop
                         self.xmax = max( self.xmax, end )
                         # Sets the line so it starts and ends on the same line
                         self.xaxis[rtype].append( (start, end) )
@@ -136,7 +136,12 @@ class CSVGapFile(object):
         for rtype in self.xaxis:
             label=rtype
             for x,y in zip( self.xaxis[rtype], self.yaxis[rtype]):
-                self.ax.plot( x, y, color=self.linestyle[rtype]['color'], label=label, lw=self.linestyle[rtype]['width'] )
+                xp = list( x )
+                # If the gap is a single base, need to extend
+                # the size by 1 so it actually shows up
+                if x[1] - x[0] == 0 and x[0] != 0:
+                    xp[1] = x[1] + 1
+                self.ax.plot( xp, y, color=self.linestyle[rtype]['color'], label=label, lw=self.linestyle[rtype]['width'] )
                 label=''
 
     def get_axis_margin( self, axisinstance, inchesdesired ):

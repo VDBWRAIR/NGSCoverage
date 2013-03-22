@@ -27,4 +27,7 @@ ${bindir}/gapstoscatter --csv ../pb1_allh3n22012.csv -o ${thisdir}/allh3n2pb1wit
 echo H3N2__Indiana__2011__NS.png
 ${bindir}/gapstoscatter --csv ../H3N2__Indiana__2011__NS.gaps -o ${thisdir}/H3N2__Indiana__2011__NS.png
 
+echo SingleGapsAtEnds.png
+${bindir}/gapstoscatter --csv ../singlegaplcatends.gaps -o ${thisdir}/SingleGapsAtEnds.png
+
 popd

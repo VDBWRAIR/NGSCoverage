@@ -7,8 +7,8 @@ from wrairlib.fff.qcxls import QCXLS
 from wrairlib.util import *
 from Bio import SeqIO
 
-from wrairlib.fff.refstatus import RefStatus
-from wrairlib.fff.alignmentinfo import AlignmentInfo, CoverageRegion
+from wrairlib.fff.fffprojectdir import ProjectDirectory
+from wrairlib.fff.fileparsers.alignmentinfo import CoverageRegion
 
 import glob
 
@@ -20,6 +20,7 @@ class AlignmentCoverage(object):
     """
     >>> basepath = os.path.dirname( os.path.abspath( __file__ ) )
     >>> pdir = glob.glob( '%s/Examples/05*' % basepath )[0]
+    >>> 
     >>> ac = AlignmentCoverage( pdir )
     >>> ref_regions = ac.find_low_coverage()
     >>> known_refregions = {
@@ -63,6 +64,8 @@ class AlignmentCoverage(object):
     """
     def __init__( self, projDir, readLowCoverage = None ):
         self.projDir = projDir
+        self.project = ProjectDirectory( projDir )
+        self.ai = self.project.AlignmentInfo
 
         if readLowCoverage:
             self.lct = readLowCoverage
@@ -70,12 +73,6 @@ class AlignmentCoverage(object):
             self.lct = MINREADDEPTH
 
         self.set_wanted_identifiers( )
-
-        if self.wanted_idents == 'DENOVO':
-            aipath = os.path.join( projDir, 'assembly', '454AlignmentInfo.tsv' )
-        else:
-            aipath = os.path.join( projDir, 'mapping', '454AlignmentInfo.tsv' )
-        self.ai = AlignmentInfo( aipath )
 
     def find_low_coverage( self ):
         """ Return only low coverage or gap regions """
@@ -119,11 +116,10 @@ class AlignmentCoverage(object):
         # Also could just be a bad projDir fed in, but hey lets keep things interesting and
         # assume that isn't the case
         self.wanted_idents = {}
-        try:
-            refstatus = os.path.join( self.projDir, 'mapping', '454RefStatus.txt' )
-            rs = RefStatus( refstatus )
+        if self.project.project_type == 'mapping':
+            rs = self.project.RefStatus
             ref = rs.get_likely_reference()
-        except IOError as e:
+        else:
             self.wanted_idents = 'DENOVO'
             return
 
@@ -144,80 +140,6 @@ class AlignmentCoverage(object):
         # Store each reference sequence name with its length
         for seq in SeqIO.parse( ref_file, 'fasta' ):
             self.wanted_idents[seq.id] = len( seq.seq )
-
-class LowCoverage:
-    projDir = None
-    ref = None
-    crTable = None
-    lct = None
-    def __init__( self, projDir, reference, lct ):
-        """
-            >>> lc = LowCoverage( 'Examples/05_11_2012_1_TI-MID51_PR_2305_pH1N1', 'California', 100 )
-            >>> print len( lc.crTable )
-            154
-        """
-        self.projDir = projDir
-        self.ref = reference
-        self.lct = lct
-        q = QCXLS( os.path.join( self.projDir, 'mapping', '454MappingQC.xls' ) )
-        t = q.getCrossReferenceTable()
-        self.crTable = self._filterTable( t[1:] )
-        self._sortTable( self.crTable )
-
-    def printTSV( self ):
-        print "Reference\tRegion Center\tAverage Alignment Depth\tMinimum Alignment Depth\tMaximum Alignment Depth"
-        for x in self.crTable:
-            print "\t".join( [x[0],x[1],x[3],x[5],x[6]] )
-
-    def _sort( self, x, y ):
-        """
-            >>> lc = LowCoverage( 'Examples/05_11_2012_1_TI-MID51_PR_2305_pH1N1', 'California', 100 )
-            >>> lc._sort( ['a',0], ['b',1] )
-            -1
-            >>> lc._sort( ['a',1], ['b',0] )
-            -1
-            >>> lc._sort( ['b',1], ['a',0] )
-            1
-            >>> lc._sort( ['b',0], ['a',1] )
-            1
-            >>> lc._sort( ['a',0], ['a',1] )
-            -1
-            >>> lc._sort( ['a',1], ['a',0] )
-            1
-            >>> lc._sort( ['a',0], ['a',0] )
-            0
-        """
-        if x[0] < y[0]:
-            return -1
-        elif x[0] > y[0]:
-            return 1
-        else:
-            if int( x[1] ) < int( y[1] ):
-                return -1
-            elif int( x[1] ) > int( y[1] ):
-                return 1
-        return 0
-
-    def _sortTable( self, table ):
-        table.sort( cmp = self._sort )
-
-    def _filterTable( self, table ):
-        """
-            Filter the given table(2d list) down to entries that have lower than the lct and also
-            entries that contain text that matches the reference we are looking for
-
-         Tests:
-            >>> d = 'Examples/05_11_2012_1_TI-MID51_PR_2305_pH1N1'
-            >>> r = 'California'
-            >>> lct = 100
-            >>> q = QCXLS( os.path.join( d, 'mapping', '454MappingQC.xls' ) )
-            >>> lc = LowCoverage( d , r, lct )
-            >>> t = lc._filterTable( q.getCrossReferenceTable()[1:] )
-            >>> len( filter( lambda x: r not in x[0] and lct <= x[5], t ) )
-            0
-        """
-        f = lambda x: int( x[5] ) < self.lct and self.ref in x[0]
-        return filter( f, table )
 
 if __name__ == '__main__':
     import doctest

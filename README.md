@@ -15,6 +15,10 @@ Single Sample With primer
 -------------------------
 ![Single Sample With Primer](https://github.com/VDBWRAIR/NGSCoverage/raw/master/coverage/Examples/testgraphs/mid51withprimer.png)
 
+H3N2 Primer Coverage
+--------------------------------
+![H3N2 Primer Coverage](https://github.com/VDBWRAIR/NGSCoverage/raw/master/coverage/Examples/testgraphs/H3N2__Managua_refcov.png)
+
 Prerequisites
 =============
 Please check under setup.py inside of install_requires for details on what python packages are required.
@@ -141,3 +145,35 @@ Opening the Output
 As this script generates comma separated value files you can open the file with Excel or OpenOffice.org and then select comma as the delimiter
 
 Hint: You can open the file from the command line in Linux by using openoffice.org -calc gaps.csv
+
+refcoverage
+===========
+This script allows you to map a primer fasta file againsta a reference fasta file. It basically draws a transparent horizontal line for every reference sequence
+found inside the reference fasta file. The length of the line is the ENTIRE sequence length. It is annotated at the end with the exact length.
+Then it gathers all of the primer regions from the primer fasta file and draws lines on top of each reference for the primers that are for each reference with arrows indicating
+reverse or forward.
+
+Usage
+-----
+```
+usage: refcoverage [-h] --reference REFFILE --primer PRIMERFILE
+                   [--pattern REFPATTERN] [--title TITLE] [-o OUTPUTFILE]
+                   [--debug {DEBUG,INFO,WARNING}]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --reference REFFILE   Reference file
+  --primer PRIMERFILE   Primer file
+  --pattern REFPATTERN  Regex to match genes in reference id lines. Has to
+                        have a named pattern called gene somewhere in it.
+                        [Default: (?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?
+                        P<strain>.*))]
+  --title TITLE         Title that will appear at top of image
+  -o OUTPUTFILE         Output file name(should end in .png)
+  --debug {DEBUG,INFO,WARNING}
+                        Output level of logger
+```
+
+The --pattern option is a bit clunky but is necessary to help ensure that you can customize how the script
+identifies which gene segement each reference identifier is. This pattern must contain a named group such as (?P<gene>....). This named group will
+be used to identify which primers match with which references. So you better make sure that your primer identifier lines contain the exact same gene name as your reference identifier lines.

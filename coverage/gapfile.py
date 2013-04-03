@@ -25,7 +25,7 @@ class CSVGapFile(object):
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot( 111 )
 
-        self.linestyle = { 'LowCoverage': {'color':'#000055', 'width':5}, 'Gap': {'color':'#BA0000', 'width':4}, 'Primer': {'color':'#000000', 'width':2} }
+        self.linestyle = { 'LowCoverage': {'color':'#000055', 'width':5}, 'Gap': {'color':'#BA0000', 'width':4}, 'Primer': {'color':'#000000', 'width':2}, 'Reference': {'color': '#00FF00', 'width': 2} }
 
     @property
     def xaxislabels( self ):

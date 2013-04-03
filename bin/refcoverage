@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+from argparse import ArgumentParser, FileType
+
+import sys
+import os.path
+
+# This junk is to hopefully try import if module is not installed
+script_dir = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+if script_dir not in sys.path:
+    sys.path.insert( 0, os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+from coverage.primercoverage import *
+
+def do_graph( args ):
+    logging_setup( args.debug )
+    make_image( args.reffile, args.primerfile, args.refpattern, args.title, args.outputfile )
+
+def get_args( ):
+    parser = ArgumentParser()
+    parser.add_argument( '--reference', dest='reffile', required=True, help='Reference file' )
+    parser.add_argument( '--primer', dest='primerfile', required=True, help='Primer file' )
+    parser.add_argument( '--pattern', dest='refpattern', default=REF_MATCH_PATTERN, help='Regex to match genes in reference id lines. Has to have a named pattern called gene somewhere in it. [Default: %s]' % REF_MATCH_PATTERN )
+    parser.add_argument( '--title', dest='title', default='Primer Coverage for Reference', help='Title that will appear at top of image' )
+    parser.add_argument( '-o', dest='outputfile', default='refcov.png', help='Output file name(should end in .png)' )
+    parser.add_argument( '--debug', dest='debug', default='WARNING', help='Output level of logger', choices=('DEBUG', 'INFO', 'WARNING') )
+
+    args = parser.parse_args()
+    return args
+
+if __name__ == '__main__':
+    do_graph( get_args() )

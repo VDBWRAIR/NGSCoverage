@@ -1,5 +1,8 @@
 import os
-from setuptools import setup
+from distutils.core import setup
+from fnmatch import fnmatch
+
+from coverage.__init__ import __version__
 
 # Utility function to read the README file.
 # Used for the long_description. It's nice, because now 1) we have a top level
@@ -9,17 +12,10 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 def scripts( ):
-    return [os.path.join( 'bin', f ) for f in os.listdir( 'bin' )]
-
-# The next three lines are modified from Biopython
-__version__ = "Undefined"
-for line in open('coverage/__init__.py'):
-    if (line.startswith('__version__')):
-        exec(line.strip())
-        break
+    return [os.path.join( 'bin', f ) for f in os.listdir( 'bin' ) if not fnmatch( f, '*.sqp' )]
 
 setup(
-    name = "coverage",
+    name = "NGSCoverage",
     version = __version__,
     author = "Tyghe Vallard",
     author_email = "vallardt@gmail.com",
@@ -31,9 +27,10 @@ setup(
     data_files = [
     ],
     install_requires = [
-        "numpy >=1.6",
-        "biopython >=1.59",
-        "wrairlib >=0.0.5",
+        "numpy (>=1.6)",
+        "biopython (>=1.59)",
+        "wrairlib (>=0.0.5)",
+        "roche",
         'matplotlib',
     ],
     long_description=read('README.md'),

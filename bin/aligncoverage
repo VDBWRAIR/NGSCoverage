@@ -7,8 +7,6 @@ import os.path
 import sys
 from argparse import ArgumentParser
 
-from wrairlib.fff.refstatus import RefStatus
-
 from coverage.coverage import AlignmentCoverage
 
 def output_normal( ref, regions ):

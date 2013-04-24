@@ -1,17 +1,11 @@
-from wrairlib import *
-from wrairlib.parser.exceptions import *
-from wrairlib.exceptions1 import *
-from wrairlib.fff.fffprojectdir import *
-from wrairlib.fff.mappingproject import MappingProject
-from wrairlib.fff.qcxls import QCXLS
-from wrairlib.util import *
+from roche.newbler import ProjectDirectory
+from roche.newbler.util import reference_file_for_identifier
+from roche.newbler.fileparsers.alignmentinfo import CoverageRegion
+
 from Bio import SeqIO
 
-from wrairlib.fff.fffprojectdir import ProjectDirectory
-from wrairlib.fff.fileparsers.alignmentinfo import CoverageRegion
-
 import glob
-
+import os.path
 
 # Default low coverage threshold
 MINREADDEPTH = 10

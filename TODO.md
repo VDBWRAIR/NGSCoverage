@@ -7,3 +7,6 @@ TODO LIST
 * Would be useful in the future to somehow be able to distinquish segments from an entire genome and graph each separtely
   on one graph each in its own subplot. Right now, you can only achieve something similar by splitting out the segments
   manually(or through scripting) and then graphing each separately and then joining the images manually
+* Model everything after a more generic alignment. That is, instead of focusing on GsMapper projects, it would be a lot
+  better if the BAM pileups were used. I feel that may be a duplication of effort as I think there may be a project
+  already out there that does this.

@@ -8,8 +8,11 @@ import re
 from argparse import ArgumentParser, FileType
 import logging
 
+from wrairlib.VIRUS import GENES
+from wrairlib.util import genenum_to_geneabbr
+
 # Default pattern to match Reference files
-REF_MATCH_PATTERN = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<strain>.*))'
+REF_MATCH_PATTERN = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<virus>.*))'
 
 def logging_setup( level ):
     # Setup basic config for logging
@@ -18,13 +21,27 @@ def logging_setup( level ):
 
 def refs( reffile, pattern ):
     '''
-        >>> from pprint import pprint
-        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<strain>.*))'
+        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<virus>.*))'
         >>> reffile = 'Examples/Ref/H1N1_boston.fasta'
-        >>> primerfile = 'Examples/Primer/sH1N1.fasta' >>> r = refs( reffile, ref_match_pattern )
+        >>> primerfile = 'Examples/Primer/sH1N1.fasta'
+        >>> r = refs( reffile, ref_match_pattern )
         >>> r == {'NS': 877, 'PB1': 2300, 'PB2': 2314, 'NA': 1446, 'PA': 2215, 'MP': 1002, 'NP': 1552, 'HA': 1750}
         True
+        >>> ref_match_pattern = '(?P<virus>\w+)/\w+/\w+/\d+/\d{4}/(?P<gene>\d?)\(\w+\)'
+        >>> reffile = 'Examples/Ref/infB_Victoria.fasta'
+        >>> primerfile = 'Examples/Primer/sH1N1.fasta'
+        >>> r = refs( reffile, ref_match_pattern )
+        >>> r == {'1': 2315, '3': 2252, '2': 2360, '5': 1776, '4': 1827, '7': 1144, '6': 1485, '8': 1037}
+        True
+        >>> ref_match_pattern = '(?P<virus>\w+?)_\w+_\w+'
+        >>> reffile = 'Examples/Ref/D3_KDC0070A_Thailand.fasta'
+        >>> primerfile = 'Examples/Primer/Den3.fasta'
+        >>> r = refs( reffile, ref_match_pattern )
+        >>> r == {'AADen3': 10668}
+        True
     '''
+    if 'virus' not in pattern:
+        raise ValueError( "Incorrect pattern given. virus named pattern must be present in pattern: %s" % pattern )
     try:
         cp = re.compile( pattern )
     except:
@@ -34,17 +51,29 @@ def refs( reffile, pattern ):
         m = cp.match( seq.id )
         if m:
             refparts = m.groupdict()
+            # If virus has genes
+            if 'gene' in pattern:
+                # Get correct gene abbreviation
+                gene = refparts['gene']
+                # If the gene is a number then assume it is a position[1-8]
+                # and fetch the abbreviation
+                try:
+                    gene = genenum_to_geneabbr( int( gene ), refparts['virus'] )
+                except ValueError:
+                    pass
+            else:
+                gene = refparts['virus']
             # Index the references by the gene name
-            refs[refparts['gene']] = len( str( seq.seq ) )
+            refs[gene] = len( str( seq.seq ) )
         else:
-            raise ValueError( "%s was in an unkown format" % reffile )
+            raise ValueError( "%s was in an unkown format. Could not match %s against SeqID: %s" % (reffile, cp.pattern, seq.id) )
 
     return refs
 
 def ref_coverage( reffile, primerfile, pattern ):
     '''
         >>> from pprint import pprint
-        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<strain>.*))'
+        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<virus>.*))'
         >>> reffile = 'Examples/Ref/H1N1_boston.fasta'
         >>> primerfile = 'Examples/Primer/sH1N1.fasta' 
         >>> rc = ref_coverage( reffile, primerfile, ref_match_pattern )
@@ -97,7 +126,7 @@ def ref_coverage( reffile, primerfile, pattern ):
 
 def max_reflen( lines ):
     '''
-        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<strain>.*))'
+        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<virus>.*))'
         >>> reffile = 'Examples/Ref/H1N1_boston.fasta'
         >>> primerfile = 'Examples/Primer/sH1N1.fasta' 
         >>> rc = ref_coverage( reffile, primerfile, ref_match_pattern )
@@ -115,10 +144,10 @@ def annotate_reference( line2d, axes ):
     arrow = { 'width': 0.5, 'headwidth': 1 }
     axes.annotate( int( end[0] ), end, (end[0]-50, end[1]+0.2), arrowprops=arrow )
 
-def make_image( reffile, primerfile, pattern, title='Primer coverage for Reference', outputname='refcov.png' ):
+def make_image( reffile, primerfile, pattern = REF_MATCH_PATTERN, title='Primer coverage for Reference', outputname='refcov.png' ):
     '''
         >>> import os
-        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<strain>.*))'
+        >>> ref_match_pattern = '(?P<name>(?P<accession>.*?)_(?P<gene>.*?)_(?P<virus>.*))'
         >>> reffile = 'Examples/Ref/H1N1_boston.fasta'
         >>> primerfile = 'Examples/Primer/sH1N1.fasta' 
         >>> make_image( reffile, primerfile, ref_match_pattern )

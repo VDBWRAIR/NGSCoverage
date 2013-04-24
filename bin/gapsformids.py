@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from wrairlib.fff.fffprojectdir import *
+from wrairnaming import Formatter
 
 from argparse import ArgumentParser
 import multiprocessing
@@ -30,7 +30,8 @@ def runaligncov( projdir, lineno ):
     global mutex1, mutex2, outputdir
 
     try:
-        sample = get_sample_from_dir_path( projdir )
+        f = Formatter()
+        sample = f.GsProject.directory_format.parse_input_name( projdir )['sample']
     except Exception:
         return
 
@@ -38,12 +39,14 @@ def runaligncov( projdir, lineno ):
     sys.stdout.write( "Processing directory #%s %s\n" % (lineno, projdir) )
     mutex2.release()
     out, err = subprocess.Popen( ['aligncoverage', '-d', projdir, '--csv'], stderr=subprocess.STDOUT, stdout=subprocess.PIPE ).communicate()
-    mutex1.acquire()
-    fh = open( os.path.join( outputdir, sample.replace( ' ', '' ) + '.gap' ), 'a' )
-    fh.write( projdir + "\n" )
-    fh.write( out )
-    fh.close()
-    mutex1.release()
+    # Don't write empty gaps file
+    if out:
+        mutex1.acquire()
+        fh = open( os.path.join( outputdir, sample.replace( ' ', '' ) + '.gap' ), 'a' )
+        fh.write( projdir + "\n" )
+        fh.write( out )
+        fh.close()
+        mutex1.release()
 
 def readindex( indexfile ):
     try:
@@ -77,7 +80,7 @@ def ops():
     parser = ArgumentParser()
 
     cpus = multiprocessing.cpu_count() - 1
-    parser.add_argument( '-i', '--index', dest='index', default=sys.stdin, help='Index to use. Defaults to standard input' )
+    parser.add_argument( '-i', '--index', dest='index', default=sys.stdin, help='GsMapper file list to use. Defaults to standard input' )
     parser.add_argument( '--cpus', dest='cpus', default=cpus, type=int, help='Number of cpus to use[Default: %s]' % cpus )
     parser.add_argument( '-o', '--output', dest='outputdir', default=None, help='Output directory[Default: Current directory]' )
 

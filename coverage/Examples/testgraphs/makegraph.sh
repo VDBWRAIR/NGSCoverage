@@ -35,6 +35,6 @@ ${bindir}/gapstoscatter --csv ../singlegaplcatends.gaps -o ${thisdir}/SingleGaps
 echo RefCoverages
 ${bindir}/refcoverage --reference ${refdir}/H1N1_boston.fasta --primer ${primerdir}/sH1N1.fasta -o ${thisdir}/H1N1__Boston_refcov.png
 ${bindir}/refcoverage --reference ${refdir}/H3N2_Managua.fasta --primer ${primerdir}/H3N2.fasta -o ${thisdir}/H3N2__Managua_refcov.png
-${bindir}/refcoverage --reference ${refdir}/D3_KDC0070A_Thailand.fasta --primer ${primerdir}/Den3.fasta -o ${thisdir}/Den3__Thailand_refcov.png --pattern '(?P<gene>.*?)_'
+${bindir}/refcoverage --reference ${refdir}/D3_KDC0070A_Thailand.fasta --primer ${primerdir}/Den3.fasta -o ${thisdir}/Den3__Thailand_refcov.png --pattern '(?P<virus>.*?)_'
 
 popd

@@ -22,6 +22,7 @@ def findgap( indexline ):
     lineno, projdir = indexline
 
     if not projdir:
+        print "Skipping %s because it is not a GsProject" % projdir
         return
 
     runaligncov( projdir, lineno )
@@ -31,8 +32,9 @@ def runaligncov( projdir, lineno ):
 
     try:
         f = Formatter()
-        sample = f.GsProject.directory_format.parse_input_name( projdir )['sample']
-    except Exception:
+        sample = f.GsProject.directory_format.parse_input_name( projdir )['samplename']
+    except Exception as e:
+        print e
         return
 
     mutex2.acquire()

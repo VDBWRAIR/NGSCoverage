@@ -94,11 +94,11 @@ class AlignmentCoverage(object):
                 reg = CoverageRegion( regions[-1].end + 1, reflen, 'Gap' )
                 regions.append( reg )
 
-            yield (ref, self._gaplc_regions( regions ))
+            yield (ref, reflen, self._gaplc_regions( regions ))
 
     def _low_coverage_assembly( self, mregions ):
         for ref, regions in mregions.iteritems():
-            yield (ref, self._gaplc_regions( regions ))
+            yield (ref, None, self._gaplc_regions( regions ))
 
     def set_wanted_identifiers( self ):
         """

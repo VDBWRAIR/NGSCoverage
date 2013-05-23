@@ -7,9 +7,9 @@ class CSVGapFile(object):
         self.primerfile = primerfile
 
         # Will be a list of start, stop next to each other
-        self.xaxis = {'LowCoverage': [], 'Gap': []}
+        self.xaxis = {'LowCoverage': [], 'Gap': [], 'Reference': []}
         # Will just be a list of numbers which coorespond to the lines in the gapfile
-        self.yaxis = {'LowCoverage': [], 'Gap': []}
+        self.yaxis = {'LowCoverage': [], 'Gap': [], 'Reference': []}
         self.yaxislabels = []
         self._xaxislabels = { }
         self.xaxislabels = 0
@@ -20,12 +20,12 @@ class CSVGapFile(object):
         self.numsamples = 0
         #ymax is same as numsamples so use property instead
         self.xmin = -10
-        self.xmax = -1 
+        #xmax is property
 
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot( 111 )
 
-        self.linestyle = { 'LowCoverage': {'color':'#000055', 'width':5}, 'Gap': {'color':'#BA0000', 'width':4}, 'Primer': {'color':'#000000', 'width':2}, 'Reference': {'color': '#00FF00', 'width': 2} }
+        self.linestyle = { 'LowCoverage': {'color':'#000055', 'width':5}, 'Gap': {'color':'#BA0000', 'width':4}, 'Primer': {'color':'#000000', 'width':2}, 'Reference': {'color': '#5F8700', 'width': 1} }
 
     @property
     def xaxislabels( self ):
@@ -34,6 +34,15 @@ class CSVGapFile(object):
     @xaxislabels.setter
     def xaxislabels( self, value ):
         self._xaxislabels[value] = str(value)
+
+    @property
+    def xmax( self ):
+        return self.__dict__.get( 'xmax', -1 )
+    @xmax.setter
+    def xmax( self, value ):
+        value = int( value )
+        if value > self.__dict__.get('xmax',-1):
+            self.__dict__['xmax'] = value
 
     @property
     def ymin( self ):
@@ -54,6 +63,12 @@ class CSVGapFile(object):
     def ystep( self ):
         return max((self.ymax - self.ymin) / 10, 1)
 
+    def split_namelen( self, namelen ):
+        namelen = namelen.split('|')
+        if len( namelen ) != 2 or namelen[1] == '':
+            raise ValueError( "{} is incorrectly formatted. Does not contain |reflen".format(namelen) )
+        return namelen
+
     def parse_csv( self ):
         # What about incorrect lines
         with open( self.filename ) as fh:
@@ -63,19 +78,22 @@ class CSVGapFile(object):
             # - Insert yaxis labels for the names with their ytick
             for line in fh:
                 try:
+                    lineno = len( self.names ) + 1
                     line = line.strip().split( ',' )
-                    self.names.append( line[0] )
-                    lineno = len( self.names )
+                    refname, reflen = self.split_namelen( line[0] )
+                    self.xmax = reflen
+                    self.names.append( refname )
+                    self.xaxis['Reference'].append( (0, int(reflen)) )
+                    self.yaxis['Reference'].append( (lineno, lineno ) )
                     # Loop through each range section(start, stop, type)
                     for i in range( 1, len( line ), 3 ):
                         start, end, rtype = line[i:i+3]
                         start = int( start )
                         end = int( end )
-                        # self.xmax will be the maximum value found at the end of the loop
-                        self.xmax = max( self.xmax, end )
                         # Sets the line so it starts and ends on the same line
                         self.xaxis[rtype].append( (start, end) )
                         self.yaxis[rtype].append( (lineno, lineno) )
+                        # Uses descriptor above to add to dictionary
                         self.xaxislabels = start
                         self.xaxislabels = end
                     self.yaxislabels.append( (lineno, line[0]) )
@@ -127,7 +145,7 @@ class CSVGapFile(object):
                     marker = '>'
                     self.ax.plot( (region.start, region.end), (genecount, genecount), color=self.linestyle['Primer']['color'], lw=self.linestyle['Primer']['width'], label=labelf, marker=marker )
                     labelf = ''
-                self.xmax = max( self.xmax, region.end )
+                self.xmax = region.end
             yaxislabels.insert( 0, (genecount, gene) )
         self.yaxislabels = yaxislabels + [(0, '')] + self.yaxislabels
 

@@ -9,25 +9,24 @@ from argparse import ArgumentParser
 
 from coverage.coverage import AlignmentCoverage
 
-def output_normal( ref, regions ):
-    print "Reference %s has the following low coverage regions:" % ref
+def output_normal( ref, reflen, regions ):
+    print "Reference(Length:{}) {} has the following low coverage regions:".format(reflen,ref)
     for region in regions:
-        print "\t%s" % region
+        print "\t{}".format(region)
 
-def output_csv( ref, regions ):
-    print "%s,%s" % (ref, ','.join( [str(region) for region in regions] ))
+def output_csv( ref, reflen, regions ):
+    print "{}|{},{}".format(ref, reflen, ','.join( [str(region) for region in regions] ))
 
 def output( ops ):
-    #ac = AlignmentCoverage( ops.dir, ops.lc )
     ac = AlignmentCoverage( ops.dir, 10 )
-    for ref, regions in ac.find_low_coverage():
+    for ref, reflen, regions in ac.find_low_coverage():
         # Skip regions with no low coverage or gaps
         if not regions:
             continue
         if ops.csv:
-            output_csv( ref, regions )
+            output_csv( ref, reflen, regions )
         else:
-            output_normal( ref, regions )
+            output_normal( ref, reflen, regions )
 
 def main( ops ):
     output( ops )

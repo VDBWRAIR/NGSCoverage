@@ -1,8 +1,9 @@
 import os
 from distutils.core import setup
 from fnmatch import fnmatch
+import subprocess
 
-from coverage.__init__ import __version__
+__version__ = 0
 
 # Utility function to read the README file.
 # Used for the long_description. It's nice, because now 1) we have a top level
@@ -13,6 +14,32 @@ def read(fname):
 
 def scripts( ):
     return [os.path.join( 'bin', f ) for f in os.listdir( 'bin' ) if not fnmatch( f, '*.sqp' )]
+
+def set_version():
+    ''' Sets the version using the current tag and revision in the git repo '''
+    if not os.path.isdir(".git"):
+        print "This does not appear to be a Git repository."
+        return
+    try:
+        p = subprocess.Popen(["git", "describe", "--tags", "--always"], stdout=subprocess.PIPE)
+    except EnvironmentError:
+        print "unable to run git"
+        return
+    stdout = p.communicate()[0]
+    if p.returncode != 0:
+        print "unable to run git"
+        return
+
+    with open( '_version.py', 'w' ) as fh:
+        global __version__
+        __version__ = stdout.strip()
+        fh.write( "__version__ = '%s'\n" % __version__ )
+
+    return True
+
+# Setup
+if set_version() is None:
+    sys.exit( -1 )
 
 setup(
     name = "NGSCoverage",

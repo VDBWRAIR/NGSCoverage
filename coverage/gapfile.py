@@ -63,10 +63,10 @@ class CSVGapFile(object):
     def ystep( self ):
         return max((self.ymax - self.ymin) / 10, 1)
 
-    def split_namelen( self, namelen ):
-        namelen = namelen.split('|')
+    def split_namelen( self, in_namelen ):
+        namelen = in_namelen.split('|')
         if len( namelen ) != 2 or namelen[1] == '':
-            raise ValueError( "{} is incorrectly formatted. Does not contain |reflen".format(namelen) )
+            raise ValueError( "{} is incorrectly formatted. Does not contain |reflen".format(in_namelen) )
         return namelen
 
     def parse_csv( self ):
@@ -99,7 +99,8 @@ class CSVGapFile(object):
                     self.yaxislabels.append( (lineno, line[0]) )
                     # Keep track of how many samples are processed
                     self.numsamples += 1
-                except ValueError:
+                except ValueError as e:
+                    print e
                     continue
         if len( self.xaxis['Gap'] ) == 0 and len( self.xaxis['LowCoverage'] ) == 0:
             raise EOFError( "Empty csv file" )

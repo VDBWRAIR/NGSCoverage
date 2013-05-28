@@ -62,7 +62,7 @@
   <ReferenceFiles>
     <SetRefCount>1</SetRefCount>
     <File>
-      <Path>../Ref/D3_KDC0070A_Thailand.fasta</Path>
+      <Path>../../Ref/D3_KDC0070A_Thailand.fasta</Path>
       <Type>Fasta</Type>
     </File>
   </ReferenceFiles>

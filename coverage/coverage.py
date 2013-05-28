@@ -6,6 +6,7 @@ from Bio import SeqIO
 
 import glob
 import os.path
+import sys
 
 # Default low coverage threshold
 MINREADDEPTH = 10

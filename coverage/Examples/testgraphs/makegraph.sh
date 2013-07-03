@@ -22,6 +22,14 @@ echo "Generating mid30withoutprimer.png"
 ${bindir}/gapstoscatter --csv gaps.csv -o ${thisdir}/mid30withoutprimer.png
 popd
 
+pushd ../R03_548__TI46__Den2
+echo "Generating R03_548__TI46__Den2.png"
+${bindir}/aligncoverage -d $(pwd) -c > gaps.csv
+${bindir}/gapstoscatter --csv gaps.csv -p ${primerdir}/PrimersConcatted.fna -o ${thisdir}/R03_548__TI46__Den2.png
+echo "Generating mid30withoutprimer.png"
+${bindir}/gapstoscatter --csv gaps.csv -o ${thisdir}/R03_548__TI46__Den2_withoutprimer.png
+popd
+
 echo pb1_allh3n22012.csv
 echo "Generating allh3n2pb1withprimer.png"
 ${bindir}/gapstoscatter --csv ../pb1_allh3n22012.csv -p ${primerdir}/H3N2.fasta -o ${thisdir}/allh3n2pb1withprimer.png
